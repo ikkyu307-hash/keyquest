@@ -1,0 +1,15 @@
+# Environment variables (contains secrets)
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules (if any)
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

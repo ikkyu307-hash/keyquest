@@ -1,0 +1,84 @@
+/* ===== AUTH CARD ===== */
+.auth-card{
+  max-width:440px;margin:40px auto 0;background:var(--panel);border-radius:22px;padding:36px 30px;
+  border:2.5px solid var(--edge);box-shadow:8px 8px 0 var(--edge), inset 0 2px 0 rgba(255,255,255,.06);
+  text-align:center;position:relative;z-index:2;
+}
+.auth-card h2{font-family:"Kanit";font-weight:800;font-size:28px;margin-bottom:6px}
+.auth-card p{font-size:13.5px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+.auth-tabs{display:flex;background:var(--panel-2);border-radius:12px;padding:4px;margin-bottom:20px;border:2px solid var(--edge)}
+.auth-tab{flex:1;border:none;background:transparent;color:var(--muted);font-family:"Kanit";font-weight:700;padding:8px;border-radius:8px;cursor:pointer;transition:.15s}
+.auth-tab.active{background:var(--amber);color:#2a1602}
+.form-group{text-align:left;margin-bottom:16px}
+.form-group label{display:block;font-size:12.5px;font-family:"Kanit";font-weight:700;margin-bottom:6px;color:var(--muted)}
+.form-input{width:100%;padding:12px 14px;border-radius:10px;background:var(--panel-2);border:2px solid var(--edge);color:var(--ink);font-family:inherit;font-size:14.5px;outline:none;transition:border-color .15s,box-shadow .15s}
+.form-input:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,180,61,.15)}
+.form-input::placeholder{color:var(--muted);opacity:0.5;font-size:13px}
+.auth-err{font-size:12.5px;color:var(--coral);margin-bottom:16px;min-height:18px;text-align:left}
+.auth-btn-group{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.auth-btn-group .btn{justify-content:center;width:100%}
+.auth-link{text-align:center;margin-top:18px;font-size:13px;color:var(--muted)}
+.auth-link a{color:var(--cyan);text-decoration:none;font-family:"Kanit";font-weight:700;transition:color .15s}
+.auth-link a:hover{color:var(--amber)}
+
+/* ===== PASSWORD WRAPPER ===== */
+.password-wrapper{position:relative;display:flex;align-items:center}
+.password-wrapper .form-input{padding-right:44px}
+.password-toggle{
+  position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:var(--muted);cursor:pointer;padding:6px;
+  display:grid;place-items:center;border-radius:6px;transition:color .15s,background .15s;
+}
+.password-toggle:hover{color:var(--amber);background:rgba(255,180,61,.1)}
+.password-toggle .ic{width:18px;height:18px}
+
+/* ===== AUTH DIVIDER ===== */
+.auth-divider{
+  display:flex;align-items:center;gap:14px;margin:20px 0;color:var(--muted);font-size:12.5px;
+  font-family:"Kanit";font-weight:600;
+}
+.auth-divider::before,.auth-divider::after{
+  content:"";flex:1;height:1.5px;background:var(--edge);
+}
+
+/* ===== LINE BUTTON ===== */
+.btn-line{
+  background:#06C755;color:#fff;border-color:#05b04b;
+  justify-content:center;display:inline-flex;align-items:center;gap:8px;
+  width:100%;padding:14px;font-family:inherit;font-size:15px;font-weight:bold;
+  border-radius:13px;cursor:pointer;transition:all 0.15s ease;
+  border:2.5px solid var(--edge);box-shadow:5px 5px 0 #037a32, inset 0 2px 0 rgba(255,255,255,.2);
+}
+.btn-line:hover{
+  background:#05b04b;transform:translate(-2px,-2px);box-shadow:7px 7px 0 #037a32;
+}
+.btn-line:active{
+  transform:translate(3px,3px);box-shadow:2px 2px 0 #037a32;
+}
+
+/* ===== FALLING BACKGROUND ===== */
+.auth-falling-bg{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.falling-item{
+  position:absolute;top:-60px;user-select:none;pointer-events:none;display:flex;
+  align-items:center;justify-content:center;font-family:"Kanit","IBM Plex Sans Thai",sans-serif;
+  font-weight:800;animation:authFall linear infinite;text-shadow:1px 1px 0 var(--edge);
+}
+.falling-item.keycap{
+  background:var(--panel-2);border:2px solid var(--edge);
+  box-shadow:0 4px 0 var(--edge), inset 0 2px 0 rgba(255,255,255,.08);
+  border-radius:10px;color:var(--ink);
+}
+.falling-item.emoji{filter:drop-shadow(2px 2px 0 var(--edge))}
+.falling-item.symbol{font-family:"Kanit","IBM Plex Sans Thai",sans-serif;font-weight:800}
+@keyframes authFall{
+  0%{transform:translateY(-60px) rotate(0deg) translateX(0px);opacity:0}
+  10%{opacity:var(--op)}
+  90%{opacity:var(--op)}
+  100%{transform:translateY(105vh) rotate(var(--rot)) translateX(var(--sway));opacity:0}
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media(max-width:480px){
+  .auth-card{padding:28px 20px;margin-top:24px}
+  .auth-card h2{font-size:22px}
+}

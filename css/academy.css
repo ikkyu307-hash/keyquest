@@ -1,0 +1,17 @@
+/* ===== SKILL ACADEMY ===== */
+.skills-container{max-width:760px;margin:0 auto}
+.skills-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+@media(max-width:600px){.skills-grid{grid-template-columns:1fr}}
+.skill-card{background:var(--panel);border-radius:16px;padding:18px 20px;border:2.5px solid var(--edge);box-shadow:4px 4px 0 var(--edge), inset 0 2px 0 rgba(255,255,255,.06);display:flex;gap:14px;align-items:flex-start;position:relative;transition:transform .15s,box-shadow .15s}
+.skill-card.equipped{border-color:var(--mint);box-shadow:4px 4px 0 var(--edge), 0 0 10px rgba(95,230,168,.15)}
+.skill-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;border:2px solid var(--edge);box-shadow:2px 2px 0 var(--edge);flex-shrink:0}
+.skill-icon .ic{width:22px;height:22px}
+.skill-body{flex:1;display:flex;flex-direction:column;gap:4px;text-align:left}
+.skill-title{font-family:"Kanit";font-weight:700;font-size:16.5px;display:flex;align-items:center;gap:6px}
+.skill-desc{font-size:12px;color:var(--muted);line-height:1.4}
+.skill-action{margin-top:8px;align-self:flex-start}
+.skill-action .btn{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;border-width:2px}
+.skill-badge{position:absolute;top:12px;right:14px;font-size:11px;font-family:"Kanit";font-weight:700;padding:2px 8px;border-radius:6px;border:1.5px solid var(--edge)}
+.skill-badge.unlocked{background:rgba(95,230,168,.15);color:var(--mint);border-color:var(--mint)}
+.skill-badge.equipped{background:var(--mint);color:#0d0b11;border-color:var(--mint)}
+.skill-badge.locked{background:var(--panel-2);color:var(--muted)}
