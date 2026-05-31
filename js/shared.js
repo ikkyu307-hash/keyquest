@@ -127,38 +127,76 @@ function updateSoundBtn() {
   b.querySelector('use').setAttribute('href', soundOn ? '#i-vol' : '#i-mute');
 }
 
-/* ===== MUSIC SYSTEM ===== */
+/* ===== MUSIC SYSTEM (YouTube Background) ===== */
 let musicOn = JSON.parse(localStorage.getItem('typing_game_music') ?? 'true');
-let musicGain = null, musicRunning = false, schedTimer = null, nextStepTime = 0, stepN = 0;
-const BPM = 88, SPS = 2, SECPSTEP = 60 / BPM / SPS;
-const CHORDS = [[261.63, 329.63, 392.00], [196.00, 246.94, 392.00], [220.00, 261.63, 329.63], [174.61, 220.00, 349.23]];
-const BASS = [130.81, 98.00, 110.00, 87.31];
-const PENT = [392.00, 440.00, 523.25, 587.33, 659.25, 783.99];
+let ytPlayer = null, ytReady = false, ytPendingPlay = false;
+const YT_VIDEO_ID = 'S3V5JPJf9Eo';
+
+/* Load YouTube IFrame API */
+(function loadYTAPI() {
+  if (window.YT && window.YT.Player) { onYTReady(); return; }
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+})();
+
+/* Called by YouTube API when ready */
+window.onYouTubeIframeAPIReady = function() { onYTReady(); };
+
+function onYTReady() {
+  // Create hidden container if not exists
+  let container = document.getElementById('yt-music-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'yt-music-container';
+    container.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;overflow:hidden;pointer-events:none';
+    document.body.appendChild(container);
+    const playerDiv = document.createElement('div');
+    playerDiv.id = 'yt-bg-player';
+    container.appendChild(playerDiv);
+  }
+
+  ytPlayer = new YT.Player('yt-bg-player', {
+    width: '1', height: '1',
+    videoId: YT_VIDEO_ID,
+    playerVars: {
+      autoplay: 0,
+      loop: 1,
+      playlist: YT_VIDEO_ID,  // Required for loop to work
+      controls: 0,
+      disablekb: 1,
+      fs: 0,
+      modestbranding: 1,
+      rel: 0,
+      playsinline: 1,
+      origin: window.location.origin
+    },
+    events: {
+      onReady: function(e) {
+        ytReady = true;
+        e.target.setVolume(60);
+        if (ytPendingPlay) { startMusic(); ytPendingPlay = false; }
+      },
+      onStateChange: function(e) {
+        // Auto-loop: if video ends, replay
+        if (e.data === YT.PlayerState.ENDED) {
+          e.target.seekTo(0); e.target.playVideo();
+        }
+      },
+      onError: function(e) {
+        console.warn('YouTube music error:', e.data);
+      }
+    }
+  });
+}
 
 function startMusic() {
-  ensureAudio(); if (!audioCtx || musicRunning) return;
-  if (!musicGain) { musicGain = audioCtx.createGain(); musicGain.connect(audioCtx.destination); }
-  musicGain.gain.cancelScheduledValues(audioCtx.currentTime);
-  musicGain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
-  musicGain.gain.linearRampToValueAtTime(0.22, audioCtx.currentTime + 1.2);
-  musicRunning = true; stepN = 0; nextStepTime = audioCtx.currentTime + 0.1;
-  schedTimer = setInterval(() => { while (nextStepTime < audioCtx.currentTime + 0.12) { playStep(stepN, nextStepTime); stepN++; nextStepTime += SECPSTEP; } }, 25);
+  if (!ytReady) { ytPendingPlay = true; return; }
+  try { ytPlayer.setVolume(60); ytPlayer.playVideo(); } catch(e) { console.warn('Music play failed:', e); }
 }
 function stopMusic() {
-  musicRunning = false; clearInterval(schedTimer);
-  if (musicGain && audioCtx) { musicGain.gain.cancelScheduledValues(audioCtx.currentTime); musicGain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4); }
-}
-function mTone(freq, t, dur, peak, type) {
-  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-  o.type = type || 'triangle'; o.frequency.value = freq;
-  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + 0.04);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + dur); o.connect(g).connect(musicGain); o.start(t); o.stop(t + dur + 0.05);
-}
-function playStep(n, t) {
-  const bar = Math.floor(n / 8) % 4, beat = n % 8;
-  if (beat === 0) { CHORDS[bar].forEach(f => mTone(f, t, SECPSTEP * 8 * 0.95, 0.05, 'triangle')); mTone(BASS[bar], t, SECPSTEP * 4, 0.10, 'sine'); }
-  if (beat === 4) mTone(BASS[bar], t, SECPSTEP * 4, 0.07, 'sine');
-  if (Math.random() < 0.5) mTone(PENT[Math.floor(Math.random() * PENT.length)], t, 0.35, 0.06, 'triangle');
+  if (!ytReady || !ytPlayer) return;
+  try { ytPlayer.pauseVideo(); } catch(e) {}
 }
 function toggleMusic() {
   musicOn = !musicOn;
@@ -172,7 +210,7 @@ function updateMusicBtn() {
   b.querySelector('use').setAttribute('href', musicOn ? '#i-music' : '#i-music-off');
 }
 
-/* first-gesture music kick */
+/* first-gesture music kick — browsers require user interaction before play */
 let _firstGesture = false;
 function kickMusic() { if (_firstGesture) return; _firstGesture = true; if (musicOn) startMusic(); }
 
@@ -343,14 +381,17 @@ function osSwitchText() { return OS_INFO[OS].text; }
 function renderFooter() {
   const fn = $('footerNote'); if (!fn) return;
   const i = OS_INFO[OS], head = (lang === 'th' ? 'ตรวจพบ:' : 'Detected:');
-  const tip = (lang === 'th' ? 'สลับแป้นพิมพ์ของเครื่องให้ตรงกับโหมดด้วย' : 'Switch your device keyboard to match the mode using');
   let keys;
-  if (i.chips) { keys = i.chips.map(c => `<span class="kbd">${c}</span>`).join(' + ') + ' ' + (i.alt[lang] || ''); }
+  if (i.chips) { keys = i.chips.map(c => `<span class="kbd">${c}</span>`).join('+') + ' ' + (i.alt[lang] || ''); }
   else { keys = (lang === 'th' ? '<span class="kbd">' + i.tap.th + '</span>' : '<span class="kbd">' + i.tap.en + '</span>'); }
+  const tipLabel = lang === 'th' ? 'สลับแป้น:' : 'Switch:';
+  const fingerTip = lang === 'th' ? 'วางนิ้วตามไกด์สี' : 'Follow finger guide';
   fn.innerHTML =
-    `<span class="os-tag">${ICON(i.icon)} ${head} ${i.label[lang]}</span><br>` +
-    `${(lang === 'th' ? 'เคล็ดลับ: ' : 'Tip: ')}${tip} ${keys} · ` +
-    (lang === 'th' ? 'วางนิ้วตามไกด์สีบนแป้นจำลอง' : 'follow the coloured finger guide on the on-screen keyboard');
+    `<span class="os-tag">${ICON(i.icon)} ${i.label[lang]}</span>` +
+    `<span class="status-sep"></span>` +
+    `${tipLabel} ${keys}` +
+    `<span class="status-sep"></span>` +
+    `${fingerTip}`;
 }
 
 /* ===== SESSION / AUTH ===== */
@@ -400,8 +441,17 @@ function setLang(l) {
   document.documentElement.lang = l;
   if ($('btnTH')) $('btnTH').classList.toggle('active', l === 'th');
   if ($('btnEN')) $('btnEN').classList.toggle('active', l === 'en');
+  updateTooltips();
   // page-specific callback
   if (typeof onLangChange === 'function') onLangChange();
+}
+
+/* ===== TOOLTIP LANG SYNC ===== */
+function updateTooltips() {
+  document.querySelectorAll('.has-tip').forEach(el => {
+    const tip = el.getAttribute(lang === 'th' ? 'data-tip-th' : 'data-tip-en');
+    if (tip) el.setAttribute('data-tip', tip);
+  });
 }
 
 /* ===== SCREEN HELPERS (for multi-screen pages like game.html) ===== */
@@ -424,6 +474,7 @@ async function initApp(options = {}) {
   document.documentElement.lang = lang;
   if ($('btnTH')) $('btnTH').classList.toggle('active', lang === 'th');
   if ($('btnEN')) $('btnEN').classList.toggle('active', lang === 'en');
+  updateTooltips();
 
   // Wire common buttons
   if ($('btnTH')) $('btnTH').onclick = () => setLang('th');

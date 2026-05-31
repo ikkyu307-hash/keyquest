@@ -1,0 +1,99 @@
+/* ================================================================
+   KEYQUEST — TUTORIAL PAGE STYLES
+   ================================================================ */
+
+.tut-head{text-align:center;margin:6px 0 28px}
+.tut-head h2{font-family:"Kanit";font-weight:800;font-size:30px;text-shadow:0 2px 20px rgba(255,180,61,.2)}
+.tut-head p{color:var(--muted);margin-top:8px;font-size:14px}
+
+/* Lessons grid */
+.lessons-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:720px;margin:0 auto}
+@media(max-width:600px){.lessons-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:400px){.lessons-grid{grid-template-columns:1fr}}
+
+.lesson-card{
+  background:var(--glass-bg);border-radius:18px;padding:22px 18px;cursor:pointer;text-align:center;
+  border:var(--glass-border);
+  backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));
+  box-shadow:var(--glass-shadow);
+  transition:all .25s ease;position:relative;overflow:hidden}
+.lesson-card::before{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.06),transparent 55%);opacity:0;transition:.25s}
+.lesson-card:hover{transform:translateY(-4px);box-shadow:var(--glass-shadow),var(--glow-sm) var(--amber-glow)}
+.lesson-card:hover::before{opacity:1}
+.lesson-card.completed{border-color:rgba(95,230,168,.3)}
+.lesson-card.completed .lc-icon{background:linear-gradient(135deg,var(--mint),#3de08e)}
+.lesson-card.locked{opacity:.5;cursor:not-allowed;pointer-events:none}
+
+.lc-icon{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;margin:0 auto 12px;
+  background:linear-gradient(135deg,#ffc863,var(--amber));
+  border:1px solid rgba(255,255,255,.15);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.lc-icon .ic{width:24px;height:24px;color:#1a162a}
+.lc-num{font-family:"Kanit";font-weight:800;font-size:18px;margin-bottom:4px}
+.lc-name{font-size:13px;color:var(--muted);line-height:1.4}
+.lc-status{position:absolute;top:10px;right:10px;font-size:18px}
+
+/* Practice screen */
+.practice-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap}
+.practice-header h3{font-family:"Kanit";font-weight:700;font-size:20px;flex:1;text-align:center}
+.lesson-progress{font-family:"Kanit";font-weight:700;font-size:13px;color:var(--muted);
+  background:rgba(255,255,255,.04);padding:5px 12px;border-radius:8px;border:1px solid var(--edge)}
+.btn-sm{padding:8px 14px!important;font-size:12px!important}
+
+/* Finger guide */
+.finger-guide{padding:16px 20px;margin-bottom:18px;text-align:center}
+.fg-title{font-family:"Kanit";font-weight:700;font-size:15px;margin-bottom:6px}
+.fg-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* Practice text */
+.practice-type-card{padding:28px 24px;margin-bottom:18px}
+.practice-text{font-size:32px;line-height:2;text-align:center;min-height:60px;user-select:none;letter-spacing:3px;
+  font-family:"IBM Plex Mono","IBM Plex Sans Thai",monospace}
+.practice-text span{transition:color .08s,background .08s}
+.practice-text span.pending{color:#4a4670}
+.practice-text span.done{color:var(--mint);text-shadow:0 0 6px rgba(95,230,168,.3)}
+.practice-text span.wrong{color:var(--coral);background:rgba(255,93,108,.15);border-radius:3px}
+.practice-text span.cur{color:var(--ink);background:rgba(255,180,61,.18);border-radius:3px;box-shadow:inset 0 -3px 0 var(--amber)}
+
+/* Practice keyboard */
+.practice-kb{max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:7px;padding:14px;
+  background:var(--glass-bg);border-radius:16px;border:var(--glass-border);
+  backdrop-filter:blur(var(--glass-blur));box-shadow:var(--glass-shadow)}
+.practice-kb .kb-row{display:flex;gap:6px;justify-content:center}
+.practice-kb .key{flex:1;min-width:0;aspect-ratio:1/1;max-width:44px;border-radius:9px;
+  background:rgba(255,255,255,.04);border:1px solid var(--edge);
+  box-shadow:0 3px 0 rgba(0,0,0,.3);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  font-size:14px;font-weight:600;position:relative;transition:all .08s}
+.practice-kb .key .sh{font-size:8px;color:var(--muted);position:absolute;top:2px;left:4px}
+.practice-kb .key.wide{flex:2;max-width:none;aspect-ratio:auto;height:44px}
+.practice-kb .key.space{flex:6;max-width:none;aspect-ratio:auto;height:44px}
+.practice-kb .key .fdot{position:absolute;bottom:4px;width:6px;height:6px;border-radius:2px;opacity:.7;border:1px solid rgba(0,0,0,.2)}
+.practice-kb .key.target{background:linear-gradient(135deg,#ffc863,var(--amber));color:#1a162a;transform:translateY(2px);
+  box-shadow:0 0 16px rgba(255,180,61,.5);border-color:transparent;animation:tutPulse 1s ease-in-out infinite}
+.practice-kb .key.finger-highlight{opacity:1}
+@keyframes tutPulse{0%,100%{box-shadow:0 0 8px rgba(255,180,61,.3)}50%{box-shadow:0 0 20px rgba(255,180,61,.7)}}
+@media(max-width:640px){.practice-kb{display:none}}
+
+/* Finger color dots */
+.f-lp .fdot{background:var(--f-lp)} .f-lr .fdot{background:var(--f-lr)} .f-lm .fdot{background:var(--f-lm)} .f-li .fdot{background:var(--f-li)}
+.f-ri .fdot{background:var(--f-ri)} .f-rm .fdot{background:var(--f-rm)} .f-rr .fdot{background:var(--f-rr)} .f-rp .fdot{background:var(--f-rp)}
+
+/* Practice stats */
+.practice-stats{display:flex;gap:14px;justify-content:center;margin-top:18px}
+.ps-item{text-align:center;min-width:70px}
+.ps-val{font-family:"Kanit";font-weight:800;font-size:22px;display:block;color:var(--amber)}
+.ps-lbl{font-size:11px;color:var(--muted);font-family:"Kanit";font-weight:600}
+
+/* Result card & grids */
+.result-card{background:var(--glass-bg);border-radius:24px;padding:42px 32px;text-align:center;
+  border:var(--glass-border);
+  backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));
+  box-shadow:var(--glass-shadow),var(--glow-md) var(--amber-glow)}
+.result-card h2{font-family:"Kanit";font-weight:800;font-size:30px;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.result-sub{color:var(--muted);margin-top:8px;font-size:14px;display:inline-flex;align-items:center;gap:7px;justify-content:center}
+.res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:32px 0 8px}
+@media(max-width:560px){.res-grid{grid-template-columns:1fr}}
+.res-grid .cell{background:rgba(255,255,255,.04);border-radius:16px;padding:18px 10px;
+  border:1px solid var(--edge);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.res-grid .cell .v{font-family:"Kanit";font-weight:800;font-size:28px}
+.res-grid .cell .k{font-size:12px;color:var(--muted);margin-top:4px;font-family:"Kanit";font-weight:700}

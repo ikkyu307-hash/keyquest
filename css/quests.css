@@ -1,0 +1,466 @@
+/* ================================================================
+   KEYQUEST — QUESTS & LEADERBOARD PAGE STYLES
+   ================================================================ */
+
+/* Tabs Navigation */
+.quest-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  justify-content: center;
+}
+
+.qtab {
+  font-family: "Kanit", sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 12px 24px;
+  border-radius: 14px;
+  background: var(--glass-bg);
+  color: var(--muted);
+  border: var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+}
+
+.qtab:hover {
+  transform: translateY(-2px);
+  color: var(--ink);
+  box-shadow: var(--glass-shadow), 0 4px 15px rgba(255, 180, 61, 0.1);
+}
+
+.qtab.active {
+  background: linear-gradient(135deg, rgba(255, 180, 61, 0.2), rgba(181, 99, 10, 0.2));
+  color: var(--amber);
+  border-color: rgba(255, 180, 61, 0.4);
+  box-shadow: var(--glass-shadow), var(--glow-sm) var(--amber-glow);
+}
+
+.qtab .ic {
+  width: 20px;
+  height: 20px;
+}
+
+/* Quests Layout */
+.quest-header, .lb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.quest-header h2, .lb-header h2 {
+  font-family: "Kanit", sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.quest-timer {
+  font-family: "Kanit", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cyan);
+  background: rgba(84, 214, 255, 0.08);
+  border: 1px solid rgba(84, 214, 255, 0.2);
+  padding: 6px 14px;
+  border-radius: 10px;
+  box-shadow: var(--glow-sm) rgba(84, 214, 255, 0.05);
+}
+
+/* Quests List & Cards */
+.quests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.quest-card {
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow);
+  border-radius: 18px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.quest-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.quest-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glass-shadow), 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.quest-card:hover::before {
+  opacity: 1;
+}
+
+.quest-card.completed {
+  border-color: rgba(95, 230, 168, 0.25);
+  background: linear-gradient(135deg, rgba(26, 22, 42, 0.65), rgba(95, 230, 168, 0.03));
+}
+
+.q-main {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: 1;
+  min-width: 0;
+}
+
+.q-icon-wrap {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--edge);
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.quest-card.completed .q-icon-wrap {
+  background: linear-gradient(135deg, var(--mint), #3de08e);
+  color: #1a162a;
+  border-color: transparent;
+  box-shadow: 0 0 12px rgba(95, 230, 168, 0.3);
+}
+
+.q-icon-wrap .ic {
+  width: 22px;
+  height: 22px;
+}
+
+.q-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.q-title {
+  font-family: "Kanit", sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  margin-bottom: 4px;
+}
+
+.q-desc {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+/* Progress bar */
+.q-progress-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.q-progress-outer {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.q-progress-inner {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--amber), #ffc863);
+  transition: width 0.4s cubic-bezier(0.1, 0.8, 0.3, 1);
+  box-shadow: 0 0 8px var(--amber-glow);
+}
+
+.quest-card.completed .q-progress-inner {
+  background: linear-gradient(90deg, var(--mint), #5fe6a8);
+  box-shadow: 0 0 8px var(--mint-glow);
+}
+
+.q-progress-text {
+  font-family: "Kanit", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--muted);
+  min-width: 45px;
+  text-align: right;
+}
+
+/* Quest Action / Claim */
+.q-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.q-rewards {
+  display: flex;
+  gap: 8px;
+}
+
+.q-reward-badge {
+  font-family: "Kanit", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.q-reward-badge.xp {
+  background: rgba(84, 214, 255, 0.08);
+  color: var(--cyan);
+  border: 1px solid rgba(84, 214, 255, 0.15);
+}
+
+.q-reward-badge.gold {
+  background: rgba(255, 180, 61, 0.08);
+  color: var(--amber);
+  border: 1px solid rgba(255, 180, 61, 0.15);
+}
+
+.q-claim-btn {
+  font-family: "Kanit", sans-serif;
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, var(--amber), #ff9f05);
+  color: #1a162a;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(255, 180, 61, 0.2);
+}
+
+.q-claim-btn:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 16px rgba(255, 180, 61, 0.35);
+}
+
+.q-claim-btn:active {
+  transform: translateY(0);
+}
+
+.q-claim-btn.disabled {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  border: 1px solid var(--edge);
+  box-shadow: none;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.q-claim-btn.claimed {
+  background: rgba(95, 230, 168, 0.1);
+  color: var(--mint);
+  border: 1px solid rgba(95, 230, 168, 0.25);
+  box-shadow: none;
+  cursor: default;
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Leaderboard Panel */
+.lb-sort-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.lb-sort {
+  font-family: "Kanit", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  border: 1px solid var(--edge);
+  transition: all 0.2s;
+}
+
+.lb-sort:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.lb-sort.active {
+  background: linear-gradient(135deg, var(--cyan), #3cbdf2);
+  color: #1a162a;
+  border-color: transparent;
+  box-shadow: var(--glow-sm) var(--cyan-glow);
+}
+
+.lb-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lb-row {
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow);
+  border-radius: 14px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  transition: all 0.2s;
+}
+
+.lb-row:hover {
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.lb-row.lb-self {
+  border-color: rgba(255, 180, 61, 0.4);
+  background: linear-gradient(90deg, rgba(255, 180, 61, 0.05), rgba(26, 22, 42, 0.55));
+  box-shadow: var(--glass-shadow), inset 0 0 12px rgba(255, 180, 61, 0.05);
+}
+
+.lb-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.lb-rank {
+  font-family: "Kanit", sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  width: 24px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.lb-row:nth-child(1) .lb-rank { color: #ffd700; font-size: 20px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+.lb-row:nth-child(2) .lb-rank { color: #c0c0c0; font-size: 18px; text-shadow: 0 0 8px rgba(192, 192, 192, 0.4); }
+.lb-row:nth-child(3) .lb-rank { color: #cd7f32; font-size: 17px; text-shadow: 0 0 6px rgba(205, 127, 50, 0.4); }
+
+.lb-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display:grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--edge);
+  font-size: 18px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.lb-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lb-name-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.lb-name {
+  font-family: "Kanit", sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lb-row.lb-self .lb-name {
+  color: var(--amber);
+}
+
+.lb-level {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.lb-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.lb-val {
+  font-family: "Kanit", sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.lb-row.lb-self .lb-val {
+  color: var(--amber);
+}
+
+.lb-val-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: "Kanit", sans-serif;
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+/* Responsiveness adjustments */
+@media (max-width: 600px) {
+  .quest-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+  .q-action {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--edge);
+    padding-top: 12px;
+  }
+}

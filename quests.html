@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ภารกิจ & อันดับ — คีย์เควสต์</title>
+  <meta name="description" content="ทำภารกิจรายสัปดาห์ รับรางวัล XP และดูอันดับผู้เล่นเก่งที่สุด">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/quests.css">
+  <script src="js/config.js"></script>
+  <script src="js/icons.js"></script>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <a href="game.html" class="logo"><svg class="logo-svg" viewBox="0 0 128 128"><use href="#i-logo"></use></svg></a>
+      <div>
+        <h1>คีย์<span>เควสต์</span></h1>
+        <p>ภารกิจ & อันดับ</p>
+      </div>
+    </div>
+    <div class="head-right">
+      <button class="icon-btn" id="btnSound" title="Sound"><svg class="ic"><use href="#i-vol"></use></svg></button>
+      <button class="icon-btn" id="btnMusic" title="Music"><svg class="ic"><use href="#i-music"></use></svg></button>
+      <div class="lang-toggle">
+        <button id="btnTH" class="active"><svg class="ic"><use href="#i-globe"></use></svg> ไทย</button>
+        <button id="btnEN"><svg class="ic"><use href="#i-globe"></use></svg> EN</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PROFILE BAR -->
+  <div class="profile-row" id="profileRow">
+    <div class="profile-bar" id="profileBar">
+      <div class="avatar" id="headerAvatar">🦊</div>
+      <div class="profile-info">
+        <div class="profile-user" id="profileUser">Guest</div>
+        <span class="profile-lvl" id="profileLvl">Lv. 1</span>
+      </div>
+      <div class="profile-stats">
+        <div class="profile-xp"><div class="profile-xp-bar" id="profileXpBar"></div></div>
+        <div class="profile-gold"><svg class="ic"><use href="#i-star"></use></svg> <span id="profileGold">0</span></div>
+      </div>
+      <button class="btn-logout" id="btnLogout" title="Logout"><svg class="ic"><use href="#i-logout"></use></svg></button>
+    </div>
+  </div>
+
+  <!-- ===== TAB NAVIGATION ===== -->
+  <div class="quest-tabs">
+    <button class="qtab active" id="tabQuests"><svg class="ic"><use href="#i-flame"></use></svg> <span id="lblTabQuests">ภารกิจ</span></button>
+    <button class="qtab" id="tabLeaderboard"><svg class="ic"><use href="#i-trophy"></use></svg> <span id="lblTabLb">อันดับ</span></button>
+  </div>
+
+  <!-- ===== QUESTS PANEL ===== -->
+  <section id="questsPanel">
+    <div class="quest-header">
+      <h2 id="questTitle">📋 ภารกิจประจำสัปดาห์</h2>
+      <div class="quest-timer" id="questTimer">รีเซ็ตใน: --</div>
+    </div>
+    <div id="questsList" class="quests-list"></div>
+  </section>
+
+  <!-- ===== LEADERBOARD PANEL ===== -->
+  <section id="leaderboardPanel" style="display:none">
+    <div class="lb-header">
+      <h2 id="lbTitle">🏆 อันดับผู้เล่น</h2>
+      <div class="lb-sort-btns">
+        <button class="lb-sort active" data-sort="xp" id="sortXp">XP</button>
+        <button class="lb-sort" data-sort="wpm" id="sortWpm">WPM</button>
+        <button class="lb-sort" data-sort="acc" id="sortAcc" ><span id="lblSortAcc">แม่นยำ</span></button>
+      </div>
+    </div>
+    <div id="lbList" class="lb-list"></div>
+  </section>
+
+  <div class="controls" style="margin-top:28px">
+    <a class="btn btn-ghost" href="game.html"><svg class="ic"><use href="#i-back"></use></svg> <span id="lblBack">กลับเกม</span></a>
+  </div>
+
+  <div class="footer-note" id="footerNote"></div>
+</div>
+
+<script src="js/shared.js"></script>
+<script src="js/quests.js"></script>
+<script>bootQuests();</script>
+</body>
+</html>

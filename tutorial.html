@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ฝึกพิมพ์สัมผัส — คีย์เควสต์</title>
+  <meta name="description" content="บทเรียนพิมพ์สัมผัส 6 ด่าน วางนิ้วให้ถูกตำแหน่ง ฝึกจนเก่ง">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/tutorial.css">
+  <script src="js/config.js"></script>
+  <script src="js/icons.js"></script>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <a href="game.html" class="logo"><svg class="logo-svg" viewBox="0 0 128 128"><use href="#i-logo"></use></svg></a>
+      <div>
+        <h1>คีย์<span>เควสต์</span></h1>
+        <p>ฝึกพิมพ์สัมผัส · Touch Typing</p>
+      </div>
+    </div>
+    <div class="head-right">
+      <button class="icon-btn" id="btnSound" title="Sound"><svg class="ic"><use href="#i-vol"></use></svg></button>
+      <button class="icon-btn" id="btnMusic" title="Music"><svg class="ic"><use href="#i-music"></use></svg></button>
+      <div class="lang-toggle">
+        <button id="btnTH" class="active"><svg class="ic"><use href="#i-globe"></use></svg> ไทย</button>
+        <button id="btnEN"><svg class="ic"><use href="#i-globe"></use></svg> EN</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PROFILE BAR -->
+  <div class="profile-row" id="profileRow">
+    <div class="profile-bar" id="profileBar">
+      <div class="avatar" id="headerAvatar">🦊</div>
+      <div class="profile-info">
+        <div class="profile-user" id="profileUser">Guest</div>
+        <span class="profile-lvl" id="profileLvl">Lv. 1</span>
+      </div>
+      <div class="profile-stats">
+        <div class="profile-xp"><div class="profile-xp-bar" id="profileXpBar"></div></div>
+        <div class="profile-gold"><svg class="ic"><use href="#i-star"></use></svg> <span id="profileGold">0</span></div>
+      </div>
+      <button class="btn-logout" id="btnLogout" title="Logout"><svg class="ic"><use href="#i-logout"></use></svg></button>
+    </div>
+  </div>
+
+  <!-- ===== LESSON SELECT SCREEN ===== -->
+  <section class="screen on" id="lessonSelect">
+    <div class="tut-head">
+      <h2 id="tutTitle">🖐 ฝึกพิมพ์สัมผัส</h2>
+      <p id="tutDesc">เรียนรู้การวางนิ้ว จำตำแหน่งแป้น พิมพ์โดยไม่ต้องมอง</p>
+    </div>
+    <div class="lessons-grid" id="lessonsGrid"></div>
+    <div class="controls" style="margin-top:28px">
+      <a class="btn btn-ghost" href="game.html"><svg class="ic"><use href="#i-back"></use></svg> <span id="lblBackGame">กลับเกม</span></a>
+    </div>
+  </section>
+
+  <!-- ===== PRACTICE SCREEN ===== -->
+  <section class="screen" id="practiceScreen">
+    <div class="practice-header">
+      <button class="btn btn-ghost btn-sm" id="btnBackLessons"><svg class="ic"><use href="#i-back"></use></svg> <span id="lblBackLesson">บทเรียน</span></button>
+      <h3 id="lessonTitle">บทเรียนที่ 1</h3>
+      <div class="lesson-progress"><span id="lessonProgressText">0 / 20</span></div>
+    </div>
+
+    <div class="finger-guide glass" id="fingerGuide">
+      <div class="fg-title" id="fgTitle">💡 วางนิ้วที่แป้นเหย้า</div>
+      <div class="fg-desc" id="fgDesc"></div>
+    </div>
+
+    <div class="practice-type-card glass">
+      <div id="practiceTextBox" class="practice-text"></div>
+    </div>
+
+    <div class="practice-kb" id="practiceKb"></div>
+
+    <div class="practice-stats">
+      <div class="ps-item"><span class="ps-val" id="psAcc">100%</span><span class="ps-lbl" id="psAccLbl">แม่นยำ</span></div>
+      <div class="ps-item"><span class="ps-val" id="psWpm">0</span><span class="ps-lbl">WPM</span></div>
+      <div class="ps-item"><span class="ps-val" id="psStreak">0</span><span class="ps-lbl" id="psStreakLbl">ต่อเนื่อง</span></div>
+    </div>
+  </section>
+
+  <!-- ===== LESSON COMPLETE ===== -->
+  <section class="screen" id="lessonComplete">
+    <div class="result-card glass" style="max-width:480px;margin:0 auto">
+      <h2 id="lcTitle">🎉 ผ่านบทเรียน!</h2>
+      <p id="lcSub" class="result-sub"></p>
+      <div class="res-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="cell"><div class="v" id="lcWpm" style="color:var(--amber)">0</div><div class="k">WPM</div></div>
+        <div class="cell"><div class="v" id="lcAcc" style="color:var(--mint)">0%</div><div class="k" id="lcAccLbl">แม่นยำ</div></div>
+        <div class="cell"><div class="v" id="lcXp" style="color:var(--cyan)">+0</div><div class="k">XP</div></div>
+      </div>
+      <div class="controls">
+        <button class="btn btn-ghost" id="btnLcLessons"><svg class="ic"><use href="#i-back"></use></svg> <span id="lblLcBack">บทเรียน</span></button>
+        <button class="btn btn-amber" id="btnLcNext"><svg class="ic"><use href="#i-next"></use></svg> <span id="lblLcNext">บทต่อไป</span></button>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer-note" id="footerNote"></div>
+</div>
+
+<script src="js/shared.js"></script>
+<script src="js/tutorial.js"></script>
+<script>bootTutorial();</script>
+</body>
+</html>

@@ -66,6 +66,11 @@ let errors=0,correctChars=0,totalKeys=0,combo=0,maxCombo=0,score=0;
 let started=false,finished=false,startTime=0,timerInt=null,charMap={};
 let cells=[],posToCell=[],marks=[];
 let shieldActive=false;
+let selectedIdx=0;
+let countingDown=false;
+
+/* ===== RESULT ANALYSIS STATE ===== */
+let wpmHistory=[],accHistory=[],errorMap={},wpmSampleInt=null;
 
 /* ===== THAI COMBINING MARKS ===== */
 function isCombiningThai(cp){return cp===0x0E31||(cp>=0x0E34&&cp<=0x0E3A)||(cp>=0x0E47&&cp<=0x0E4E);}
@@ -105,18 +110,73 @@ function highlightKey(ch){document.querySelectorAll('.key.next,.key.shifthi').fo
   if(info.shift)document.querySelectorAll('.shiftL,.shiftR').forEach(s=>s.classList.add('shifthi'));}
 
 /* ===== MENU ===== */
-const T={th:{title:'เลือกระดับความยาก',hint:'ทุกระดับสุ่มโจทย์ใหม่ทุกครั้งที่เล่น'},
-         en:{title:'Choose a difficulty',hint:'Every round is randomly generated'}};
+const T={th:{title:'เลือกระดับความยาก',hint:'ทุกระดับสุ่มโจทย์ใหม่ทุกครั้งที่เล่น',navHint:['←','→','เลือกด่าน','Enter','เริ่มเกม']},
+         en:{title:'Choose a difficulty',hint:'Every round is randomly generated',navHint:['←','→','Select','Enter','Start']}};
 function renderMenu(){
   $('menuTitle').textContent=T[lang].title;$('menuHint').textContent=T[lang].hint;
+  const nh=T[lang].navHint;
+  $('menuNavHint').innerHTML=`<kbd>${nh[0]}</kbd><kbd>${nh[1]}</kbd> ${nh[2]} &nbsp; <kbd>${nh[3]}</kbd> ${nh[4]}`;
   const grid=$('diffGrid');grid.innerHTML='';
-  DIFF_ORDER.forEach(key=>{
+  DIFF_ORDER.forEach((key,i)=>{
     const d=DIFFS[key];const card=document.createElement('div');card.className='dcard '+d.cls;
+    if(i===selectedIdx)card.classList.add('selected');
     const dots=[1,2,3,4].map(n=>`<i class="${n<=d.dots?'fill':''}"></i>`).join('');
     card.innerHTML=`<div class="dicon">${ICON(d.icon)}</div><h3>${d.name[lang]}</h3>
-      <div class="desc">${d.desc[lang]}</div><div class="diff">${dots}</div>`;
-    card.onclick=()=>startGame(key);grid.appendChild(card);
+      <div class="desc">${d.desc[lang]}</div><div class="diff">${dots}</div><div class="select-arrow"></div>`;
+    card.onclick=()=>{selectedIdx=i;updateSelection();launchWithCountdown(key);};
+    card.onmouseenter=()=>{selectedIdx=i;updateSelection();};
+    grid.appendChild(card);
   });
+}
+function updateSelection(){
+  const cards=document.querySelectorAll('.dcard');
+  cards.forEach((c,i)=>{c.classList.toggle('selected',i===selectedIdx);});
+  // scroll selected into view
+  const sel=cards[selectedIdx];
+  if(sel)sel.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+}
+function menuKeyHandler(e){
+  if(!screens||!screens.menu.classList.contains('on'))return;
+  if(countingDown)return;
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();selectedIdx=(selectedIdx+1)%DIFF_ORDER.length;updateSelection();tick();}
+  else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();selectedIdx=(selectedIdx-1+DIFF_ORDER.length)%DIFF_ORDER.length;updateSelection();tick();}
+  else if(e.key==='Enter'){e.preventDefault();launchWithCountdown(DIFF_ORDER[selectedIdx]);}
+}
+
+/* ===== COUNTDOWN ===== */
+function launchWithCountdown(key){
+  if(countingDown)return;
+  countingDown=true;
+  const overlay=$('countdownOverlay');
+  const numEl=$('countdownNumber');
+  overlay.style.display='flex';
+  let count=3;
+  numEl.textContent=count;
+  numEl.className='countdown-number';
+  // force re-animation
+  void numEl.offsetWidth;
+  tick();
+  const iv=setInterval(()=>{
+    count--;
+    if(count>0){
+      numEl.textContent=count;
+      numEl.className='countdown-number';
+      void numEl.offsetWidth;
+      numEl.className='countdown-number';
+      tick();
+    } else if(count===0){
+      numEl.textContent=lang==='th'?'เริ่ม!':'START!';
+      numEl.className='countdown-number go-text';
+      void numEl.offsetWidth;
+      numEl.className='countdown-number go-text';
+      thock(true,false);
+    } else {
+      clearInterval(iv);
+      overlay.style.display='none';
+      countingDown=false;
+      startGame(key);
+    }
+  },750);
 }
 
 /* ===== GAME FLOW ===== */
@@ -148,7 +208,9 @@ function paintProgress(){const spans=$('textBox').children;
     sp.classList.add(cls);}
   const pb=$('progBar');if(pb)pb.style.width=(target.length?pos/target.length*100:0)+'%';}
 function startTimer(){started=true;startTime=performance.now();
-  timerInt=setInterval(()=>{const t=(performance.now()-startTime)/1000;updateStats(t,accuracy(),wpm(t));},100);}
+  wpmHistory=[];accHistory=[];errorMap={};
+  timerInt=setInterval(()=>{const t=(performance.now()-startTime)/1000;updateStats(t,accuracy(),wpm(t));},100);
+  wpmSampleInt=setInterval(()=>{const t=(performance.now()-startTime)/1000;wpmHistory.push(wpm(t));accHistory.push(accuracy());},1000);}
 const accuracy=()=>totalKeys===0?100:Math.max(0,Math.round(correctChars/totalKeys*100));
 const wpm=t=>t<=0?0:Math.round((correctChars/5)/(t/60));
 function updateStats(t,acc,w){$('sTime').querySelector('.v').innerHTML=t.toFixed(1)+'<small>s</small>';
@@ -168,7 +230,8 @@ function handleChar(ch){
     if(combo%10===0)milestone(combo);
     pos++;
   }else{
-    errors++;
+    errors++;const expected=target[pos];
+    errorMap[expected]=(errorMap[expected]||0)+1;
     if(shieldActive&&combo>=5){
       shieldActive=false;
       floatPoints(cellSpan(pos),lang==='th'?'🛡️ ป้องกัน!':'🛡️ Blocked!',true);
@@ -229,7 +292,7 @@ function handleBackspace(){if(finished||pos===0||!started)return;tick();pos--;
 
 /* ===== FINISH ===== */
 async function finish(){
-  finished=true;clearInterval(timerInt);
+  finished=true;clearInterval(timerInt);clearInterval(wpmSampleInt);
   const t=(performance.now()-startTime)/1000;const acc=accuracy(),w=wpm(t);
   score+=maxCombo*5+(acc===100?200:0);
   let stars=1;if(acc>=90&&w>=20)stars=2;if(acc>=96&&w>=35)stars=3;
@@ -271,8 +334,153 @@ async function finish(){
   }
 
   winSound();spawnConfetti();
+  renderDetailedResult(w,acc,t);
   updateProfileBar();
+  if (typeof updateQuestProgress === 'function') {
+    await updateQuestProgress({ wpm: w, acc: acc, combo: maxCombo, diff: diffKey, stars: stars });
+  }
   await saveUserStats();
+}
+
+/* ===== DETAILED RESULT ANALYSIS ===== */
+function calcConsistency(){
+  if(wpmHistory.length<2)return 100;
+  const avg=wpmHistory.reduce((a,b)=>a+b,0)/wpmHistory.length;
+  const variance=wpmHistory.reduce((s,v)=>s+Math.pow(v-avg,2),0)/wpmHistory.length;
+  const stdDev=Math.sqrt(variance);
+  return Math.max(0,Math.round(100-stdDev*2));
+}
+
+function generateCoachingTips(w,acc,consistency){
+  const tips=[];
+  const isTh=lang==='th';
+  const hasErrors=Object.keys(errorMap).length>0;
+  if(acc<80)tips.push({icon:'target',text:isTh?'เน้นความแม่นยำก่อนความเร็ว — ลองลดสปีดแล้วพิมพ์ให้ถูกทุกตัว':'Focus on accuracy first — slow down and type every character correctly',color:'var(--coral)'});
+  else if(acc<95)tips.push({icon:'target',text:isTh?'ใกล้แล้ว! พยายามอ่านล่วงหน้า 2-3 ตัวอักษรจะช่วยได้':'Almost there! Try reading 2-3 characters ahead',color:'var(--amber)'});
+  if(w<20)tips.push({icon:'kb',text:isTh?'ลองฝึกโหมดวางนิ้ว (Touch Typing) เพื่อจำตำแหน่งแป้นด้วยกล้ามเนื้อ':'Try the Touch Typing tutorial to build muscle memory',color:'var(--cyan)'});
+  else if(w<40&&acc>=90)tips.push({icon:'gauge',text:isTh?'ดีมาก! ค่อยๆ เพิ่มสปีดทีละนิด อย่ากลัวผิด':'Great! Gradually increase speed — don\'t be afraid to make mistakes',color:'var(--mint)'});
+  if(consistency<50)tips.push({icon:'gauge',text:isTh?'ความเร็วขึ้น-ลงเยอะ — ลองรักษาจังหวะให้สม่ำเสมอ':'Speed fluctuates a lot — try to maintain a steady rhythm',color:'var(--purple)'});
+  if(!hasErrors&&acc===100)tips.push({icon:'star',text:isTh?'สุดยอด! ลองท้าทายด่านที่ยากขึ้นเพื่อยกระดับ!':'Outstanding! Try a harder difficulty to level up!',color:'var(--amber)'});
+  if(hasErrors){
+    const sorted=Object.entries(errorMap).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    const chars=sorted.map(e=>`"${e[0]===' '?(isTh?'เว้นวรรค':'Space'):e[0]}"`).join(', ');
+    tips.push({icon:'bulb',text:isTh?`ตัวอักษรที่ผิดบ่อย: ${chars} — ลองฝึกแป้นเหล่านี้โดยเฉพาะ`:`Most missed characters: ${chars} — practice these keys specifically`,color:'var(--coral)'});
+  }
+  if(tips.length===0)tips.push({icon:'star',text:isTh?'ทำได้ดีมาก! ฝึกทุกวันจะเก่งขึ้นเรื่อยๆ':'Great job! Practice daily to keep improving',color:'var(--mint)'});
+  return tips;
+}
+
+function renderDetailedResult(w,acc,t){
+  const cps=(correctChars/t).toFixed(1);
+  const rawWpm=Math.round((totalKeys/5)/(t/60));
+  const consistency=calcConsistency();
+  const tips=generateCoachingTips(w,acc,consistency);
+  const isTh=lang==='th';
+
+  const container=$('detailedResult');
+  if(!container)return;
+
+  // Extra stats row
+  let html=`<div class="detail-stats">`;
+  html+=`<div class="ds-item has-tip" data-tip-th="Raw WPM — ความเร็วดิบก่อนหักพิมพ์ผิด" data-tip-en="Raw WPM — speed before deducting errors"><div class="ds-val" style="color:var(--amber)">${rawWpm}</div><div class="ds-lbl">Raw WPM</div></div>`;
+  html+=`<div class="ds-item has-tip" data-tip-th="Characters Per Second — จำนวนตัวอักษรต่อวินาที" data-tip-en="Characters Per Second"><div class="ds-val" style="color:var(--cyan)">${cps}</div><div class="ds-lbl">CPS</div></div>`;
+  html+=`<div class="ds-item has-tip" data-tip-th="Consistency — ความสม่ำเสมอของสปีด (100% = เท่ากันตลอด)" data-tip-en="Consistency — how steady your speed is (100% = perfectly even)"><div class="ds-val" style="color:var(--purple)">${consistency}%</div><div class="ds-lbl">${isTh?'สม่ำเสมอ':'Consistency'}</div></div>`;
+  html+=`<div class="ds-item has-tip" data-tip-th="จำนวนครั้งที่พิมพ์ผิดทั้งหมด" data-tip-en="Total number of wrong keystrokes"><div class="ds-val" style="color:var(--coral)">${errors}</div><div class="ds-lbl">${isTh?'พิมพ์ผิด':'Errors'}</div></div>`;
+  html+=`</div>`;
+
+  // WPM Chart
+  html+=`<div class="wpm-chart-wrap"><canvas id="wpmChart" width="500" height="160"></canvas></div>`;
+
+  // Error heatmap
+  const sortedErrors=Object.entries(errorMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  html+=`<div class="error-section">`;
+  html+=`<div class="section-title">${ICON('target')} ${isTh?'ตัวอักษรที่ผิดบ่อย':'Most Missed Characters'}</div>`;
+  if(sortedErrors.length===0){
+    html+=`<div class="error-perfect">${isTh?'🎉 สมบูรณ์แบบ! ไม่มีตัวผิดเลย':'🎉 Perfect! No mistakes at all'}</div>`;
+  }else{
+    html+=`<div class="error-badges">`;
+    sortedErrors.forEach(([ch,cnt])=>{
+      const label=ch===' '?(isTh?'เว้นวรรค':'Space'):ch;
+      html+=`<span class="error-badge"><span class="eb-char">${label}</span><span class="eb-cnt">×${cnt}</span></span>`;
+    });
+    html+=`</div>`;
+  }
+  html+=`</div>`;
+
+  // Coaching tips
+  html+=`<div class="coaching-panel">`;
+  html+=`<div class="section-title">${ICON('bulb')} ${isTh?'คำแนะนำการฝึก':'Coaching Tips'}</div>`;
+  tips.forEach(tip=>{
+    html+=`<div class="coach-tip"><span class="ct-icon" style="color:${tip.color}">${ICON(tip.icon)}</span><span class="ct-text">${tip.text}</span></div>`;
+  });
+  html+=`</div>`;
+
+  container.innerHTML=html;
+  updateTooltips();
+
+  // Draw chart after DOM update
+  requestAnimationFrame(()=>drawWpmChart());
+}
+
+function drawWpmChart(){
+  const canvas=$('wpmChart');
+  if(!canvas||wpmHistory.length<2)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  const pad={l:40,r:16,t:12,b:28};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  ctx.clearRect(0,0,W,H);
+
+  const maxW=Math.max(...wpmHistory,20);
+  const stepY=Math.ceil(maxW/4);
+  const gridMax=stepY*4;
+
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=pad.t+cH-(cH*i/4);
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cW,y);ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.3)';ctx.font='10px "IBM Plex Mono"';ctx.textAlign='right';
+    ctx.fillText(stepY*i,pad.l-6,y+3);
+  }
+  // X labels
+  ctx.fillStyle='rgba(255,255,255,.3)';ctx.textAlign='center';ctx.font='10px "IBM Plex Mono"';
+  const maxX=wpmHistory.length;
+  for(let i=0;i<maxX;i+=Math.max(1,Math.floor(maxX/6))){
+    const x=pad.l+(cW*i/(maxX-1||1));
+    ctx.fillText(i+'s',x,H-6);
+  }
+
+  // WPM line
+  ctx.strokeStyle='rgba(255,180,61,.9)';ctx.lineWidth=2.5;ctx.lineJoin='round';
+  ctx.shadowColor='rgba(255,180,61,.4)';ctx.shadowBlur=8;
+  ctx.beginPath();
+  wpmHistory.forEach((v,i)=>{
+    const x=pad.l+(cW*i/(maxX-1||1));
+    const y=pad.t+cH-(cH*Math.min(v,gridMax)/gridMax);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.stroke();ctx.shadowBlur=0;
+
+  // Accuracy line
+  if(accHistory.length>=2){
+    ctx.strokeStyle='rgba(95,230,168,.6)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    accHistory.forEach((v,i)=>{
+      const x=pad.l+(cW*i/(maxX-1||1));
+      const y=pad.t+cH-(cH*(v/100)*gridMax/gridMax);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.stroke();ctx.setLineDash([]);
+  }
+
+  // Legend
+  const lx=pad.l+8,ly=pad.t+14;
+  ctx.fillStyle='rgba(255,180,61,.9)';ctx.fillRect(lx,ly-4,14,3);
+  ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='10px "IBM Plex Mono"';ctx.textAlign='left';
+  ctx.fillText('WPM',lx+18,ly);
+  ctx.fillStyle='rgba(95,230,168,.6)';ctx.fillRect(lx+56,ly-4,14,3);
+  ctx.fillStyle='rgba(255,255,255,.5)';ctx.fillText('Acc',lx+74,ly);
 }
 
 /* ===== INPUT ===== */
@@ -289,6 +497,10 @@ function setupInput(){
 /* ===== LANG CHANGE ===== */
 function onLangChange(){
   renderMenu();
+  const isTh = lang === 'th';
+  if ($('lblAcademy')) $('lblAcademy').textContent = isTh ? 'สำนักฝึกวิชา' : 'Academy';
+  if ($('lblTutorial')) $('lblTutorial').textContent = isTh ? 'ฝึกวางนิ้ว' : 'Finger Guide';
+  if ($('lblQuests')) $('lblQuests').textContent = isTh ? 'ภารกิจ & อันดับ' : 'Quests & Rank';
   renderFooter();
 }
 
@@ -298,15 +510,20 @@ async function bootGame(){
   if(!ok)return;
 
   initScreens();
-  renderMenu();
+  onLangChange();
 
   // Wire buttons
   $('btnBack').onclick=()=>{clearInterval(timerInt);showScreen(screens,'menu');};
-  $('btnRestart').onclick=()=>startGame(diffKey);
+  $('btnRestart').onclick=()=>launchWithCountdown(diffKey);
   $('btnMenu').onclick=()=>showScreen(screens,'menu');
-  $('btnRetry').onclick=()=>startGame(diffKey);
-  $('btnNext').onclick=()=>{const idx=DIFF_ORDER.indexOf(diffKey);startGame(DIFF_ORDER[Math.min(idx+1,DIFF_ORDER.length-1)]);};
+  $('btnRetry').onclick=()=>launchWithCountdown(diffKey);
+  $('btnNext').onclick=()=>{const idx=DIFF_ORDER.indexOf(diffKey);launchWithCountdown(DIFF_ORDER[Math.min(idx+1,DIFF_ORDER.length-1)]);};
   $('btnGoAcademy').onclick=()=>{window.location.href='academy.html';};
+  $('btnGoTutorial').onclick=()=>{window.location.href='tutorial.html';};
+  $('btnGoQuests').onclick=()=>{window.location.href='quests.html';};
+
+  // Menu arrow key navigation
+  window.addEventListener('keydown',menuKeyHandler);
 
   setupInput();
   showScreen(screens,'menu');

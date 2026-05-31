@@ -13,3 +13,8 @@ node_modules/
 .vscode/
 *.swp
 *.swo
+
+# AI / IDE Local Configs
+.claude/
+.cursor/
+.gemini/
