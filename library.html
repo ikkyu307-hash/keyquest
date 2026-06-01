@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สมุดภาพมอนสเตอร์ — คีย์เควสต์</title>
+  <meta name="description" content="สมุดภาพรวมมอนสเตอร์ที่คุณเคยต่อกรในเกมฝึกพิมพ์ดีดไทย & อังกฤษ">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/library.css">
+  <script src="js/config.js"></script>
+  <script src="js/icons.js"></script>
+</head>
+<body class="screen">
+<div class="wrap">
+  <header>
+    <button class="btn btn-ghost" id="btnBack" onclick="playClick(); setTimeout(()=>location.href='profile.html',150)">
+      <svg class="ic"><use href="#i-back"></use></svg> <span id="lblBack">กลับหน้าโปรไฟล์</span>
+    </button>
+    <div class="head-right">
+      <button class="icon-btn" id="btnSound" title="เปิด/ปิดเสียงพิมพ์"><svg class="ic"><use href="#i-vol"></use></svg></button>
+      <button class="icon-btn" id="btnMusic" title="เปิด/ปิดเพลงประกอบ"><svg class="ic"><use href="#i-music"></use></svg></button>
+      <div class="lang-toggle">
+        <button id="btnTH" class="active"><svg class="ic"><use href="#i-globe"></use></svg> ไทย</button>
+        <button id="btnEN"><svg class="ic"><use href="#i-globe"></use></svg> EN</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="lib-container">
+    <div class="lib-header">
+      <h2 id="lblLibTitle">สมุดภาพมอนสเตอร์</h2>
+      <p id="lblLibDesc">สำรวจมอนสเตอร์ที่คุณเคยเผชิญหน้าและกำจัดสำเร็จ</p>
+    </div>
+
+    <div class="lib-grid" id="libGrid">
+      <!-- Generated via JS -->
+    </div>
+  </div>
+
+  <div class="footer-note" id="footerNote"></div>
+</div>
+
+<script src="js/shared.js"></script>
+<script src="js/library.js"></script>
+<script>bootLibrary();</script>
+</body>
+</html>

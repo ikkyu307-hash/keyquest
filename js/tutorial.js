@@ -143,6 +143,14 @@ function renderLessons(){
     grid.appendChild(card);
   });
   renderGuide();
+  updateLessonsSelection();
+  // Add mouse hover integration
+  document.querySelectorAll('.lesson-card').forEach((el, idx) => {
+    el.onmouseenter = () => {
+      selectedLessonIdx = idx;
+      updateLessonsSelection();
+    };
+  });
 }
 
 /* ===== RENDER GUIDE CONTENT ===== */
@@ -536,12 +544,67 @@ function onLangChange(){
 }
 
 /* ===== BOOT ===== */
+
+/* ===== LOBBY KEYBOARD NAVIGATION ===== */
+let selectedLessonIdx = 0;
+
+function updateLessonsSelection() {
+  const cards = document.querySelectorAll('.lesson-card');
+  cards.forEach((el, idx) => {
+    el.classList.toggle('selected', idx === selectedLessonIdx);
+  });
+}
+
+function tutorialKeyHandler(e) {
+  // Only navigate if we are on the lessonSelect screen
+  if (!screens.lessonSelect || !screens.lessonSelect.classList.contains('on')) return;
+  if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+
+  if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    selectedLessonIdx = (selectedLessonIdx + 1) % 6;
+    updateLessonsSelection();
+    playMenuBeep();
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    selectedLessonIdx = (selectedLessonIdx - 1 + 6) % 6;
+    updateLessonsSelection();
+    playMenuBeep();
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    // 2-column layout: Down jumps +2
+    selectedLessonIdx = (selectedLessonIdx + 2) % 6;
+    updateLessonsSelection();
+    playMenuBeep();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    selectedLessonIdx = (selectedLessonIdx - 2 + 6) % 6;
+    updateLessonsSelection();
+    playMenuBeep();
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    playMenuBeep();
+    const les = LESSONS[selectedLessonIdx];
+    if (les) {
+      const progress = getLessonProgress();
+      const done = progress[les.id];
+      const prevDone = selectedLessonIdx === 0 || progress[LESSONS[selectedLessonIdx - 1].id];
+      const locked = !prevDone && !done;
+      if (!locked) {
+        startLesson(les);
+      }
+    }
+  }
+}
+
 async function bootTutorial(){
   const ok=await initApp({requireAuth:true});
   if(!ok)return;
 
   initScreens();
   renderLessons();
+
+  window.addEventListener('keydown', tutorialKeyHandler);
 
   const btnTabLessons = $('btnTabLessons');
   const btnTabGuide = $('btnTabGuide');

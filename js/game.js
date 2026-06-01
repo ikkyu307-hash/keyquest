@@ -62,6 +62,7 @@ const DIFFS={
 
 /* ===== GAME STATE ===== */
 let diffKey='easy',target='',pos=0;
+let latestResult = { wpm: 0, acc: 0, time: 0, score: 0 };
 let errors=0,correctChars=0,totalKeys=0,combo=0,maxCombo=0,score=0;
 let started=false,finished=false,startTime=0,timerInt=null,charMap={};
 let cells=[],posToCell=[],marks=[];
@@ -178,16 +179,78 @@ function launchWithCountdown(key){
   },750);
 }
 
+
+/* ===== MONSTERS CONFIG ===== */
+const MONSTERS = {
+  easy: { id: 'monsterSlime', name: { th: 'สไลม์วุ้นน้อย', en: 'Baby Slime' }, lvl: 'Lv. 5' },
+  medium: { id: 'monsterGoblin', name: { th: 'กอบลินหัวขโมย', en: 'Goblin Thief' }, lvl: 'Lv. 18' },
+  hard: { id: 'monsterDragon', name: { th: 'มังกรไฟโลกันตร์', en: 'Fire Dragon' }, lvl: 'Lv. 55' },
+  extreme: { id: 'monsterDragon', name: { th: 'มังกรดำจักรพรรดิ', en: 'Darkness Overlord' }, lvl: 'Lv. 99' }
+};
+
+function floatDamage(dmg, isCrit = false) {
+  const stage = $('monsterStage');
+  if (!stage) return;
+  const f = document.createElement('div');
+  f.className = 'float-damage' + (isCrit ? ' crit' : '');
+  f.textContent = isCrit ? dmg : '-' + dmg;
+  f.style.left = (40 + Math.random() * 20) + '%';
+  f.style.top = (15 + Math.random() * 15) + 'px';
+  stage.appendChild(f);
+  setTimeout(() => f.remove(), 800);
+}
+
+let currentMonsterId = '';
+let currentMonsterIsBoss = false;
+
 /* ===== GAME FLOW ===== */
 function startGame(key){
   ensureAudio();if(musicOn)startMusic();
   const stage=$('monsterStage');if(stage)stage.classList.add('playing');
   diffKey=key;target=DIFFS[key].gen(lang);
+
+  // Spawn Boss Variant logic
+  let mInfo = Object.assign({}, MONSTERS[key] || MONSTERS['easy']);
+  currentMonsterIsBoss = false;
+  if (userStats.max_wpm > 40 && (key === 'medium' || key === 'hard' || key === 'extreme') && Math.random() < 0.3) {
+    mInfo.lvl = 'Lv. ' + (parseInt(mInfo.lvl.replace('Lv. ','')) + 30) + ' Boss';
+    mInfo.name.th = 'บอส ' + mInfo.name.th;
+    mInfo.name.en = 'Boss ' + mInfo.name.en;
+    currentMonsterIsBoss = true;
+    target += ' ' + DIFFS[key].gen(lang); // Double the length for Boss
+  }
+  currentMonsterId = mInfo.id + (currentMonsterIsBoss ? '_boss' : '');
+
   cells=buildCells(target);posToCell=[];cells.forEach((c,ci)=>{for(let i=c.start;i<c.end;i++)posToCell[i]=ci;});
   marks=new Array(target.length).fill('');
   pos=0;errors=0;correctChars=0;totalKeys=0;combo=0;maxCombo=0;score=0;
   started=false;finished=false;clearInterval(timerInt);updateHeat();
   shieldActive=userStats.equipped_skills&&userStats.equipped_skills.includes('comboshield');
+
+  // Spawn active monster and hide inactive ones
+  ['monsterSlime', 'monsterGoblin', 'monsterDragon'].forEach(id => {
+    const el = $(id);
+    if (el) {
+      el.style.display = 'none';
+      el.classList.remove('active', 'damaged', 'defeated', 'taunt', 'boss-scale');
+    }
+  });
+  
+  const activeEl = $(mInfo.id);
+  if (activeEl) {
+    activeEl.style.display = 'block';
+    activeEl.classList.add('active');
+    if (currentMonsterIsBoss) activeEl.classList.add('boss-scale');
+  }
+  const mNameEl = $('monsterName');
+  if (mNameEl) mNameEl.textContent = mInfo.name[lang];
+  const mLvlEl = $('monsterLvlBadge');
+  if (mLvlEl) mLvlEl.textContent = mInfo.lvl;
+  const hpFill = $('monsterHpFill');
+  if (hpFill) hpFill.style.width = '100%';
+  const hpText = $('monsterHpText');
+  if (hpText) hpText.textContent = '100%';
+
   $('lvlLabel').textContent=DIFFS[key].name[lang];
   const sc=osSwitchText();
   $('liveHint').textContent=lang==='th'
@@ -231,10 +294,52 @@ function handleChar(ch){
     correctChars++;combo++;if(combo>maxCombo)maxCombo=combo;score+=gain;
     marks[pos]='ok';flashChar(cellSpan(pos),false);floatPoints(cellSpan(pos),gain);comboBump();updateHeat();
     if(combo%10===0)milestone(combo);
+
+    // Float Damage points above active monster
+    const isCrit = combo >= 12 || Math.random() < 0.12;
+    const baseDmg = isCrit ? (Math.floor(Math.random() * 20) + 30) : (Math.floor(Math.random() * 8) + 8);
+    floatDamage(isCrit ? `CRIT! ${baseDmg}` : baseDmg, isCrit);
+    
+    if(isCrit){
+      const stage=$('monsterStage');
+      if(stage){
+        stage.classList.remove('crit-shake');
+        void stage.offsetWidth;
+        stage.classList.add('crit-shake');
+        setTimeout(()=>stage.classList.remove('crit-shake'),300);
+      }
+    }
+
+    // Monster Damage flash/shake
+    const mInfo = MONSTERS[diffKey] || MONSTERS['easy'];
+    const activeEl = $(mInfo.id);
+    if (activeEl) {
+      activeEl.classList.remove('damaged');
+      void activeEl.offsetWidth; // trigger reflow
+      activeEl.classList.add('damaged');
+    }
+
     pos++;
+
+    // Update HP bar UI
+    const hpPct = Math.max(0, 100 - Math.round(pos / target.length * 100));
+    const hpFill = $('monsterHpFill');
+    if (hpFill) hpFill.style.width = hpPct + '%';
+    const hpText = $('monsterHpText');
+    if (hpText) hpText.textContent = hpPct + '%';
   }else{
     errors++;const expected=target[pos];
     errorMap[expected]=(errorMap[expected]||0)+1;
+
+    // Monster taunts player on mistake
+    const mInfo = MONSTERS[diffKey] || MONSTERS['easy'];
+    const activeEl = $(mInfo.id);
+    if (activeEl) {
+      activeEl.classList.remove('taunt');
+      void activeEl.offsetWidth;
+      activeEl.classList.add('taunt');
+    }
+
     if(shieldActive&&combo>=5){
       shieldActive=false;
       floatPoints(cellSpan(pos),lang==='th'?'🛡️ ป้องกัน!':'🛡️ Blocked!',true);
@@ -298,6 +403,23 @@ async function finish(){
   finished=true;clearInterval(timerInt);clearInterval(wpmSampleInt);
   stopGameplayMusic();
   const stage=$('monsterStage');if(stage)stage.classList.remove('playing');
+
+  // Set HP to 0% and defeat active monster
+  const hpFill = $('monsterHpFill');
+  if (hpFill) hpFill.style.width = '0%';
+  const hpText = $('monsterHpText');
+  if (hpText) hpText.textContent = '0%';
+
+  const mInfo = MONSTERS[diffKey] || MONSTERS['easy'];
+  const activeEl = $(mInfo.id);
+  if (activeEl) {
+    activeEl.classList.remove('damaged', 'taunt');
+    activeEl.classList.add('defeated');
+  }
+  
+  if(!userStats.monsters_killed) userStats.monsters_killed = {};
+  userStats.monsters_killed[currentMonsterId] = (userStats.monsters_killed[currentMonsterId] || 0) + 1;
+
   const t=(performance.now()-startTime)/1000;const acc=accuracy(),w=wpm(t);
   score+=maxCombo*5+(acc===100?200:0);
   let stars=1;if(acc>=90&&w>=20)stars=2;if(acc>=96&&w>=35)stars=3;
@@ -538,6 +660,217 @@ function onLangChange(){
 async function bootGame(){
   const ok=await initApp({requireAuth:true});
   if(!ok)return;
+
+  // LINE Share button click logic
+  if ($('btnShareLine')) {
+    $('btnShareLine').onclick = async () => {
+      if (!window.liff) return;
+      if (!liff.isLoggedIn()) {
+        liff.login();
+        return;
+      }
+      const isTh = lang === 'th';
+      const diffName = DIFFS[diffKey].name[isTh ? 'th' : 'en'];
+      
+      const flexMessage = {
+        type: "flex",
+        altText: isTh 
+          ? `ฉันทำคะแนนฝึกพิมพ์ดีด KeyQuest ได้ ${latestResult.score} คะแนน!` 
+          : `I scored ${latestResult.score} in KeyQuest!`,
+        contents: {
+          type: "bubble",
+          size: "medium",
+          hero: {
+            type: "image",
+            url: "https://keyquest-game.web.app/logo.png",
+            size: "full",
+            aspectRatio: "20:13",
+            aspectMode: "cover",
+            backgroundColor: "#0c0a14"
+          },
+          body: {
+            type: "box",
+            layout: "vertical",
+            backgroundColor: "#0c0a14",
+            paddingAll: "20px",
+            contents: [
+              {
+                type: "text",
+                text: "KEYQUEST",
+                weight: "bold",
+                color: "#ffb43d",
+                size: "sm",
+                letterSpacing: "2px"
+              },
+              {
+                type: "text",
+                text: isTh ? "สรุปผลการฝึกพิมพ์ดีด" : "Typing Test Results",
+                weight: "bold",
+                color: "#ffffff",
+                size: "xl",
+                margin: "xs"
+              },
+              {
+                type: "box",
+                layout: "vertical",
+                margin: "md",
+                spacing: "sm",
+                contents: [
+                  {
+                    type: "box",
+                    layout: "horizontal",
+                    contents: [
+                      {
+                        type: "text",
+                        text: isTh ? "ระดับความยาก" : "Difficulty",
+                        color: "#8b83b0",
+                        size: "sm"
+                      },
+                      {
+                        type: "text",
+                        text: diffName,
+                        color: "#ffffff",
+                        size: "sm",
+                        weight: "bold",
+                        align: "end"
+                      }
+                    ]
+                  },
+                  {
+                    type: "box",
+                    layout: "horizontal",
+                    contents: [
+                      {
+                        type: "text",
+                        text: "Speed (WPM)",
+                        color: "#8b83b0",
+                        size: "sm"
+                      },
+                      {
+                        type: "text",
+                        text: `${Math.round(latestResult.wpm)} WPM`,
+                        color: "#ffb43d",
+                        size: "sm",
+                        weight: "bold",
+                        align: "end"
+                      }
+                    ]
+                  },
+                  {
+                    type: "box",
+                    layout: "horizontal",
+                    contents: [
+                      {
+                        type: "text",
+                        text: isTh ? "ความแม่นยำ" : "Accuracy",
+                        color: "#8b83b0",
+                        size: "sm"
+                      },
+                      {
+                        type: "text",
+                        text: `${latestResult.acc}%`,
+                        color: "#5fe6a8",
+                        size: "sm",
+                        weight: "bold",
+                        align: "end"
+                      }
+                    ]
+                  },
+                  {
+                    type: "box",
+                    layout: "horizontal",
+                    contents: [
+                      {
+                        type: "text",
+                        text: isTh ? "เวลาที่ใช้" : "Time",
+                        color: "#8b83b0",
+                        size: "sm"
+                      },
+                      {
+                        type: "text",
+                        text: `${latestResult.time.toFixed(1)}s`,
+                        color: "#54d6ff",
+                        size: "sm",
+                        weight: "bold",
+                        align: "end"
+                      }
+                    ]
+                  },
+                  {
+                    type: "box",
+                    layout: "horizontal",
+                    contents: [
+                      {
+                        type: "text",
+                        text: isTh ? "คะแนนรวม" : "Total Score",
+                        color: "#8b83b0",
+                        size: "sm"
+                      },
+                      {
+                        type: "text",
+                        text: `${latestResult.score}`,
+                        color: "#ff5d6c",
+                        size: "sm",
+                        weight: "bold",
+                        align: "end"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          footer: {
+            type: "box",
+            layout: "vertical",
+            backgroundColor: "#0c0a14",
+            paddingAll: "15px",
+            contents: [
+              {
+                type: "button",
+                action: {
+                  type: "uri",
+                  label: isTh ? "ท้าทายเพื่อฝึกพิมพ์ดีด" : "Challenge Me!",
+                  uri: "https://keyquest-game.web.app"
+                },
+                style: "primary",
+                color: "#ffb43d"
+              }
+            ]
+          }
+        }
+      };
+      
+      try {
+        const res = await liff.shareTargetPicker([flexMessage]);
+        if (res) {
+          Swal.fire({
+            title: isTh ? 'แชร์สำเร็จ!' : 'Shared Successfully!',
+            icon: 'success',
+            background: '#1a1a2e', color: '#fff'
+          });
+        }
+      } catch (err) {
+        console.error('Share failed:', err);
+      }
+    };
+  }
+
+  // Initialize LIFF for game sharing
+  if (window.liff) {
+    try {
+      if (!liff.isInitialized()) {
+        await liff.init({ liffId: LIFF_ID });
+      }
+      if (liff.isLoggedIn() || liff.isApiAvailable('shareTargetPicker')) {
+        const btn = $('btnShareLine');
+        if (btn) btn.style.display = 'inline-flex';
+      }
+    } catch(e) {
+      console.warn('LIFF init in game page failed:', e);
+    }
+  }
+
 
   initScreens();
   onLangChange();

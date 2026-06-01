@@ -133,7 +133,16 @@ function renderProfilePage() {
   $('profStatAcc').textContent = (userStats.avg_accuracy || 0) + '%';
   $('profStatGold').textContent = userStats.gold || 0;
 
-  const isTh = lang === 'th';
+    const isTh = lang === 'th';
+  if ($('lblLobbyPlayTitle')) $('lblLobbyPlayTitle').textContent = isTh ? 'ด่านคีย์เควสต์ (Quest)' : 'Quest Stages';
+  if ($('lblLobbyPlayDesc')) $('lblLobbyPlayDesc').textContent = isTh ? 'ผจญภัยในโลกฝึกพิมพ์ดีด สะสม XP และทองคำ' : 'Adventure through typing tests, earn XP and Gold';
+  if ($('lblLobbyAcademyTitle')) $('lblLobbyAcademyTitle').textContent = isTh ? 'สำนักฝึกวิชา (Academy)' : 'Skills Academy';
+  if ($('lblLobbyAcademyDesc')) $('lblLobbyAcademyDesc').textContent = isTh ? 'แลกเปลี่ยนทองเพื่อเปิดความสามารถพิเศษและธีมใหม่' : 'Spend Gold to unlock unique skills and visual themes';
+  if ($('lblLobbyQuestsTitle')) $('lblLobbyQuestsTitle').textContent = isTh ? 'ภารกิจ & อันดับ' : 'Quest & Rank';
+  if ($('lblLobbyQuestsDesc')) $('lblLobbyQuestsDesc').textContent = isTh ? 'ทำภารกิจประจำสัปดาห์และท้าทายตารางจัดอันดับ' : 'Complete weekly tasks and climb the global leaderboards';
+  if ($('lblLobbyTutorialTitle')) $('lblLobbyTutorialTitle').textContent = isTh ? 'ฝึกวางนิ้ว (Tutorial)' : 'Finger Placement';
+  if ($('lblLobbyTutorialDesc')) $('lblLobbyTutorialDesc').textContent = isTh ? 'ปูพื้นฐานการวางนิ้วตามหลักการพิมพ์สัมผัสที่ถูกต้อง' : 'Learn standard touch-typing row layouts for speed';
+
   $('lblSelectGuardian').textContent = isTh ? 'อัปโหลดรูปโปรไฟล์' : 'Upload Profile Picture';
   if ($('lblUploadHint')) $('lblUploadHint').textContent = isTh ? 'คลิกเลือกรูป หรือลากวาง' : 'Click to choose or drag & drop';
   if ($('lblConfirmUpload')) $('lblConfirmUpload').textContent = isTh ? 'บันทึกรูปโปรไฟล์' : 'Save Profile Picture';
@@ -142,26 +151,134 @@ function renderProfilePage() {
   $('lblProfWpm').textContent = isTh ? 'WPM สูงสุด' : 'Max WPM';
   $('lblProfAcc').textContent = isTh ? 'แม่นยำเฉลี่ย' : 'Avg Accuracy';
   $('lblProfGold').textContent = isTh ? 'ทองสะสม' : 'Total Gold';
-  $('lblStartQuest').textContent = isTh ? 'เข้าสู่การเลือกด่าน (Start Quest)' : 'Start Quest';
-  $('lblProfAcademy').textContent = isTh ? 'สำนักฝึกวิชา (Academy)' : 'Skill Academy';
+  if ($('lblStartQuest')) $('lblStartQuest').textContent = isTh ? 'เข้าสู่การเลือกด่าน (Start Quest)' : 'Start Quest';
+  if ($('lblProfAcademy')) $('lblProfAcademy').textContent = isTh ? 'สำนักฝึกวิชา (Academy)' : 'Skill Academy';
   $('lblProfLogout').textContent = isTh ? 'ออกจากระบบ' : 'Log Out';
 }
 
 function onLangChange() { renderProfilePage(); renderFooter(); }
 
 /* ===== BOOT ===== */
+
+
+let selectedLobbyIdx = 2; // Default to Play card
+const lobbyCards = [
+  { id: 'btnEditAvatar', action: () => { const btn = $('btnEditAvatar'); if (btn) btn.click(); } }, // 0
+  { id: 'btnProfileLogout', action: () => handleLogout() }, // 1
+  { id: 'btnLobbyPlay', url: 'game.html' }, // 2
+  { id: 'btnLobbyAcademy', url: 'academy.html' }, // 3
+  { id: 'btnLobbyQuests', url: 'quests.html' }, // 4
+  { id: 'btnLobbyTutorial', url: 'tutorial.html' }, // 5
+  { id: 'btnLobbyLibrary', url: 'library.html' } // 6
+];
+
+function updateLobbySelection() {
+  lobbyCards.forEach((c, idx) => {
+    const el = $(c.id);
+    if (el) {
+      el.classList.toggle('selected', idx === selectedLobbyIdx);
+    }
+  });
+}
+
+function lobbyKeyHandler(e) {
+  if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+  const panel = $('avatarSelectorPanel');
+  if (panel && panel.style.display === 'block') {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      panel.style.display = 'none';
+      if (typeof playMenuBeep === 'function') playMenuBeep();
+    }
+    return;
+  }
+
+  if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    if (selectedLobbyIdx === 0) selectedLobbyIdx = 2;
+    else if (selectedLobbyIdx === 1) selectedLobbyIdx = 4;
+    else if (selectedLobbyIdx === 2) selectedLobbyIdx = 3;
+    else if (selectedLobbyIdx === 4) selectedLobbyIdx = 5;
+    else if (selectedLobbyIdx === 6) selectedLobbyIdx = 6;
+    else if (selectedLobbyIdx === 3) selectedLobbyIdx = 0;
+    else if (selectedLobbyIdx === 5) selectedLobbyIdx = 1;
+    updateLobbySelection();
+    if (typeof playMenuBeep === 'function') playMenuBeep();
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    if (selectedLobbyIdx === 0) selectedLobbyIdx = 3;
+    else if (selectedLobbyIdx === 1) selectedLobbyIdx = 5;
+    else if (selectedLobbyIdx === 2) selectedLobbyIdx = 0;
+    else if (selectedLobbyIdx === 4) selectedLobbyIdx = 1;
+    else if (selectedLobbyIdx === 6) selectedLobbyIdx = 1;
+    else if (selectedLobbyIdx === 3) selectedLobbyIdx = 2;
+    else if (selectedLobbyIdx === 5) selectedLobbyIdx = 4;
+    updateLobbySelection();
+    if (typeof playMenuBeep === 'function') playMenuBeep();
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (selectedLobbyIdx === 0) selectedLobbyIdx = 1;
+    else if (selectedLobbyIdx === 1) selectedLobbyIdx = 0;
+    else if (selectedLobbyIdx === 2) selectedLobbyIdx = 4;
+    else if (selectedLobbyIdx === 3) selectedLobbyIdx = 5;
+    else if (selectedLobbyIdx === 4) selectedLobbyIdx = 6;
+    else if (selectedLobbyIdx === 5) selectedLobbyIdx = 6;
+    else if (selectedLobbyIdx === 6) selectedLobbyIdx = 2;
+    updateLobbySelection();
+    if (typeof playMenuBeep === 'function') playMenuBeep();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (selectedLobbyIdx === 0) selectedLobbyIdx = 1;
+    else if (selectedLobbyIdx === 1) selectedLobbyIdx = 0;
+    else if (selectedLobbyIdx === 6) selectedLobbyIdx = 4;
+    else if (selectedLobbyIdx === 4) selectedLobbyIdx = 2;
+    else if (selectedLobbyIdx === 5) selectedLobbyIdx = 3;
+    else if (selectedLobbyIdx === 2) selectedLobbyIdx = 6;
+    else if (selectedLobbyIdx === 3) selectedLobbyIdx = 6;
+    updateLobbySelection();
+    if (typeof playMenuBeep === 'function') playMenuBeep();
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (typeof playMenuBeep === 'function') playMenuBeep();
+    const item = lobbyCards[selectedLobbyIdx];
+    if (item.url) {
+      window.location.href = item.url;
+    } else if (item.action) {
+      item.action();
+    }
+  }
+}
+
 async function bootProfile() {
   const ok = await initApp({ requireAuth: true });
   if (!ok) return;
 
   renderProfilePage();
   setupAvatarUpload();
+  
+  // Initialize selection and key listener
+  updateLobbySelection();
+  window.addEventListener('keydown', lobbyKeyHandler);
+  
+  // Update mouse hover to sync selectedIdx
+  lobbyCards.forEach((c, idx) => {
+    const el = $(c.id);
+    if (el) {
+      el.onmouseenter = () => {
+        selectedLobbyIdx = idx;
+        updateLobbySelection();
+      };
+    }
+  });
 
   $('btnEditAvatar').onclick = () => {
     const panel = $('avatarSelectorPanel');
     panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
   };
-  $('btnStartQuest').onclick = () => { window.location.href = 'game.html'; };
-  $('btnProfileAcademy').onclick = () => { window.location.href = 'academy.html'; };
-  $('btnProfileLogout').onclick = handleLogout;
+  if ($('btnLobbyPlay')) $('btnLobbyPlay').onclick = () => { window.location.href = 'game.html'; };
+  if ($('btnLobbyAcademy')) $('btnLobbyAcademy').onclick = () => { window.location.href = 'academy.html'; };
+  if ($('btnLobbyQuests')) $('btnLobbyQuests').onclick = () => { window.location.href = 'quests.html'; };
+  if ($('btnLobbyTutorial')) $('btnLobbyTutorial').onclick = () => { window.location.href = 'tutorial.html'; };
+  if ($('btnLobbyLibrary')) $('btnLobbyLibrary').onclick = () => { window.location.href = 'library.html'; };
+  if ($('btnProfileLogout')) $('btnProfileLogout').onclick = handleLogout;
 }

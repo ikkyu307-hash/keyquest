@@ -46,12 +46,14 @@
 html{height:100%;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 body{
   font-family:"IBM Plex Sans Thai","IBM Plex Mono",sans-serif;
-  background:var(--bg);
-  color:var(--ink);min-height:100%;display:flex;flex-direction:column;align-items:center;
+  background: linear-gradient(rgba(12, 10, 20, 0.7), rgba(12, 10, 20, 0.7)), url('../bg.png') no-repeat center center;
+  background-size: cover;
+  background-attachment: fixed;
+  color:var(--ink);min-height:100vh;display:flex;flex-direction:column;align-items:center;
   padding:26px 16px 36px;position:relative;overflow-x:hidden;
 }
 ::selection{background:rgba(255,180,61,.3);color:#fff}
-.wrap{width:100%;max-width:980px;position:relative;z-index:1}
+.wrap{width:100%;max-width:1440px;padding:0 24px;position:relative;z-index:1}
 .ic{width:18px;height:18px;display:inline-block;flex:none;stroke:currentColor;fill:none;
     stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px;
     shape-rendering: crispEdges;}
@@ -59,10 +61,7 @@ svg {
   shape-rendering: crispEdges;}
 
 /* ===== RETRO PIXEL BACKGROUND ===== */
-body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background: url('../bg.png') no-repeat center center;
-  background-size: cover;
-  opacity: 0.35;}
+
 
 /* Noise texture overlay */
 body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;

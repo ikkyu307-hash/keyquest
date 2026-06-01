@@ -388,6 +388,10 @@ function renderQuestsList(quests, progress, claimed) {
     `;
     list.appendChild(card);
   });
+  
+  questsListRef = quests;
+  questsCount = quests.length;
+  updateQuestsSelection();
 }
 
 // Claim reward for a quest
@@ -496,6 +500,15 @@ function startCountdown() {
   timerInterval = setInterval(update, 1000);
 }
 
+// Get Rank Title by Level
+function getRankTitle(level, isTh) {
+  if (level >= 15) return isTh ? 'ยอดปรมาจารย์' : 'Grandmaster';
+  if (level >= 10) return isTh ? 'ปรมาจารย์' : 'Master';
+  if (level >= 7) return isTh ? 'ผู้เชี่ยวชาญ' : 'Adept';
+  if (level >= 4) return isTh ? 'ผู้ฝึกหัด' : 'Apprentice';
+  return isTh ? 'มือใหม่' : 'Novice';
+}
+
 // Render Leaderboard list
 async function renderLeaderboard() {
   const lbList = $('lbList');
@@ -590,13 +603,15 @@ async function renderLeaderboard() {
       ? `<img src="${item.avatar_url}">` 
       : item.avatar_url;
 
+    const rankTitle = getRankTitle(item.level, isTh);
+
     row.innerHTML = `
       <div class="lb-left">
         <div class="lb-rank">${index + 1}</div>
         <div class="lb-avatar">${avHtml}</div>
         <div class="lb-name-group">
           <div class="lb-name">${item.display_name}</div>
-          <div class="lb-level">Lv. ${item.level}</div>
+          <div class="lb-level">Lv. ${item.level} <span style="opacity:0.6;font-size:11px;margin-left:4px;">(${rankTitle})</span></div>
         </div>
       </div>
       <div class="lb-right">
@@ -617,7 +632,7 @@ function onLangChange() {
   $('lblTabLb').textContent = isTh ? 'อันดับ' : 'Leaderboard';
   $('lbTitle').textContent = isTh ? '🏆 อันดับผู้เล่น' : '🏆 Top Rankings';
   $('lblSortAcc').textContent = isTh ? 'แม่นยำ' : 'Accuracy';
-  $('lblBack').textContent = isTh ? 'กลับเกม' : 'Back to Game';
+  if ($('lblBack')) $('lblBack').textContent = isTh ? 'กลับโปรไฟล์' : 'Back to Profile';
 
   // Re-render
   const weekStart = getMondayDateString();
@@ -639,6 +654,65 @@ function onLangChange() {
 }
 
 /* ===== BOOT ENTRY POINT ===== */
+
+/* ===== KEYBOARD NAVIGATION ===== */
+let selectedQuestIdx = 0;
+let questsCount = 0;
+let questsListRef = [];
+
+function updateQuestsSelection() {
+  const cards = document.querySelectorAll('.quest-card');
+  cards.forEach((el, idx) => {
+    el.classList.toggle('selected', idx === selectedQuestIdx);
+  });
+}
+
+function questsKeyHandler(e) {
+  if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+  if (questsCount === 0) return;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    selectedQuestIdx = (selectedQuestIdx + 1) % questsCount;
+    updateQuestsSelection();
+    playMenuBeep();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    selectedQuestIdx = (selectedQuestIdx - 1 + questsCount) % questsCount;
+    updateQuestsSelection();
+    playMenuBeep();
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    const activeQuest = questsListRef[selectedQuestIdx];
+    if (activeQuest) {
+      // Find the claim button for this quest card and click it
+      const card = document.querySelectorAll('.quest-card')[selectedQuestIdx];
+      if (card) {
+        const btn = card.querySelector('.btn-amber, .btn');
+        if (btn && !btn.disabled) {
+          btn.click();
+        }
+      }
+    }
+  }
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
+    playClick();
+    setTimeout(() => location.href = 'profile.html', 150);
+  } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+    // Switch tabs if we are at the top, or just allow toggling
+    e.preventDefault();
+    const tabQuests = $('tabQuests');
+    const tabLb = $('tabLeaderboard');
+    if (tabQuests && tabQuests.classList.contains('active')) {
+      tabLb.click();
+    } else if (tabLb) {
+      tabQuests.click();
+    }
+    playMenuBeep();
+  }
+}
+
 async function bootQuests() {
   const ok = await initApp({ requireAuth: true });
   if (!ok) return;
@@ -720,4 +794,7 @@ async function bootQuests() {
 
   // Initial render
   onLangChange();
+  
+  // Attach keyboard navigation
+  window.addEventListener('keydown', questsKeyHandler);
 }

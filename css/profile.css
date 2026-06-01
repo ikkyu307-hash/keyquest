@@ -103,3 +103,196 @@
   .profile-avatar-large{width:80px;height:80px;font-size:40px}
   .profile-avatar-wrapper{width:80px;height:80px}
 }
+
+/* ===== LOBBY LAYOUT ===== */
+.lobby-layout {
+  display: flex;
+  gap: 28px;
+  margin-top: 24px;
+  align-items: flex-start;
+  width: 100%;
+}
+.lobby-profile-col {
+  flex: 1;
+  max-width: 400px;
+  width: 100%;
+}
+.lobby-menu-col {
+  flex: 1.8;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+.lobby-profile-col .profile-card {
+  max-width: 100%;
+  margin-top: 0;
+  box-shadow: var(--glass-shadow);
+}
+
+/* RPG Menu Cards */
+.lobby-card {
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: 24px;
+  padding: 30px 24px;
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 200px;
+  box-shadow: var(--glass-shadow);
+}
+.lobby-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(255,255,255,0.06), transparent 60%);
+  opacity: 0;
+  transition: 0.25s;
+}
+.lobby-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255,255,255,0.2);
+}
+.lobby-card:hover::before {
+  opacity: 1;
+}
+
+.lobby-card.lc-play { box-shadow: var(--glass-shadow), var(--glow-sm) rgba(255, 180, 61, 0.15); border-color: rgba(255, 180, 61, 0.2); }
+.lobby-card.lc-play:hover { box-shadow: var(--glass-shadow), var(--glow-md) rgba(255, 180, 61, 0.25); border-color: var(--amber); }
+
+.lobby-card.lc-academy { box-shadow: var(--glass-shadow), var(--glow-sm) rgba(167, 139, 250, 0.15); border-color: rgba(167, 139, 250, 0.2); }
+.lobby-card.lc-academy:hover { box-shadow: var(--glass-shadow), var(--glow-md) rgba(167, 139, 250, 0.25); border-color: var(--purple); }
+
+.lobby-card.lc-quests { box-shadow: var(--glass-shadow), var(--glow-sm) rgba(95, 230, 168, 0.15); border-color: rgba(95, 230, 168, 0.2); }
+.lobby-card.lc-quests:hover { box-shadow: var(--glass-shadow), var(--glow-md) rgba(95, 230, 168, 0.25); border-color: var(--mint); }
+
+.lobby-card.lc-tutorial { box-shadow: var(--glass-shadow), var(--glow-sm) rgba(84, 214, 255, 0.15); border-color: rgba(84, 214, 255, 0.2); }
+.lobby-card.lc-tutorial:hover { box-shadow: var(--glass-shadow), var(--glow-md) rgba(84, 214, 255, 0.25); border-color: var(--cyan); }
+
+.lobby-card.lc-library { box-shadow: var(--glass-shadow), var(--glow-sm) rgba(255, 93, 108, 0.15); border-color: rgba(255, 93, 108, 0.2); }
+.lobby-card.lc-library:hover { box-shadow: var(--glass-shadow), var(--glow-md) rgba(255, 93, 108, 0.25); border-color: var(--coral); }
+
+.lc-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 16px;
+  color: #fff;
+  transition: all 0.3s;
+}
+.lc-play .lc-icon { background: linear-gradient(135deg, #ffc863, var(--amber)); }
+.lc-academy .lc-icon { background: linear-gradient(135deg, #c084fc, var(--purple)); }
+.lc-quests .lc-icon { background: linear-gradient(135deg, #9be29b, var(--mint)); }
+.lc-tutorial .lc-icon { background: linear-gradient(135deg, #7cd0ff, var(--cyan)); }
+.lc-library .lc-icon { background: linear-gradient(135deg, #ff8fa0, var(--coral)); }
+
+.lobby-card:hover .lc-icon {
+  transform: scale(1.1) rotate(4deg);
+}
+
+.lc-title {
+  font-family: "Kanit", sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.lc-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.5;
+  flex: 1;
+}
+.lc-arrow {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--edge);
+  align-self: flex-end;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  transition: all 0.2s;
+  margin-top: 12px;
+}
+.lobby-card:hover .lc-arrow {
+  background: #fff;
+  color: #0c0a14;
+  border-color: #fff;
+  transform: translateX(4px);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .lobby-layout {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .lobby-profile-col {
+    max-width: 480px;
+    width: 100%;
+  }
+  .lobby-menu-col {
+    width: 100%;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 580px) {
+  .lobby-menu-col {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .lobby-card {
+    min-height: auto;
+    padding: 24px;
+  }
+}
+
+/* ===== LOBBY SELECTED CARD STYLES ===== */
+.lobby-card.selected {
+  transform: translateY(-6px);
+  border-color: rgba(255,255,255,0.25);
+}
+.lobby-card.selected::before {
+  opacity: 1;
+}
+
+.lobby-card.lc-play.selected { box-shadow: var(--glass-shadow), var(--glow-md) rgba(255, 180, 61, 0.25); border-color: var(--amber); }
+.lobby-card.lc-academy.selected { box-shadow: var(--glass-shadow), var(--glow-md) rgba(167, 139, 250, 0.25); border-color: var(--purple); }
+.lobby-card.lc-quests.selected { box-shadow: var(--glass-shadow), var(--glow-md) rgba(95, 230, 168, 0.25); border-color: var(--mint); }
+.lobby-card.lc-tutorial.selected { box-shadow: var(--glass-shadow), var(--glow-md) rgba(84, 214, 255, 0.25); border-color: var(--cyan); }
+.lobby-card.lc-library.selected { box-shadow: var(--glass-shadow), var(--glow-md) rgba(255, 93, 108, 0.25); border-color: var(--coral); }
+
+.lobby-card.selected .lc-icon {
+  transform: scale(1.1) rotate(4deg);
+}
+.lobby-card.selected .lc-arrow {
+  background: #fff;
+  color: #0c0a14;
+  border-color: #fff;
+  transform: translateX(4px);
+}
+
+/* ===== PROFILE BUTTONS SELECTED ===== */
+.profile-avatar-edit-btn.selected {
+  transform: scale(1.25);
+  box-shadow: 0 0 15px var(--amber);
+  border-color: #fff;
+}
+#btnProfileLogout.selected {
+  background: rgba(255, 93, 108, 0.12);
+  border-color: var(--coral);
+  color: #fff;
+  box-shadow: var(--glass-shadow), var(--glow-sm) var(--coral-glow);
+}

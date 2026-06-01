@@ -82,32 +82,63 @@ function ensureAudio() {
   } catch (e) { soundOn = false; }
 }
 
+function playSlashSound() {
+  if (!soundOn) return; ensureAudio(); if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(800, t);
+  osc.frequency.exponentialRampToValueAtTime(100, t + 0.1);
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0, t);
+  gain.gain.linearRampToValueAtTime(0.15, t + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+  osc.connect(gain).connect(masterGain);
+  osc.start(t); osc.stop(t + 0.1);
+  if (noiseBuf) {
+    const n = audioCtx.createBufferSource(); n.buffer = noiseBuf;
+    const nf = audioCtx.createBiquadFilter(); nf.type = 'highpass';
+    nf.frequency.value = 2000;
+    const ng = audioCtx.createGain(); 
+    ng.gain.setValueAtTime(0, t);
+    ng.gain.linearRampToValueAtTime(0.2, t + 0.03);
+    ng.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+    n.connect(nf).connect(ng).connect(masterGain); 
+    n.start(t); n.stop(t + 0.15);
+  }
+}
+
 function thock(deep, wrong) {
   if (!soundOn) return;
   if (wrong) {
     ensureAudio();
     if (!audioCtx) return;
     const t = audioCtx.currentTime;
-    const o = audioCtx.createOscillator(), og = audioCtx.createGain();
-    o.type = 'triangle';
-    const pitchMult = 1.0;
-    const base = 150 * 0.78 * (0.96 + Math.random() * 0.08) * pitchMult;
-    o.frequency.setValueAtTime(base, t);
-    o.frequency.exponentialRampToValueAtTime(base * 0.55, t + 0.07);
-    const peak = 0.28;
-    og.gain.setValueAtTime(0.0001, t);
-    og.gain.exponentialRampToValueAtTime(peak, t + 0.006);
-    og.gain.exponentialRampToValueAtTime(0.0001, t + 0.085);
-    o.connect(og).connect(masterGain); o.start(t); o.stop(t + 0.16);
-    if (noiseBuf) {
-      const n = audioCtx.createBufferSource(); n.buffer = noiseBuf;
-      const nf = audioCtx.createBiquadFilter(); nf.type = 'bandpass';
-      nf.frequency.value = 1100; nf.Q.value = 0.7;
-      const ng = audioCtx.createGain(); ng.gain.value = 0.1;
-      n.connect(nf).connect(ng).connect(masterGain); n.start(t); n.stop(t + 0.03);
-    }
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'square';
+    o.frequency.setValueAtTime(300, t);
+    o.frequency.exponentialRampToValueAtTime(100, t + 0.08);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.2, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+    o.connect(g).connect(masterGain);
+    o.start(t); o.stop(t + 0.1);
+    
+    const o2 = audioCtx.createOscillator();
+    const g2 = audioCtx.createGain();
+    o2.type = 'sine';
+    o2.frequency.setValueAtTime(150, t);
+    o2.frequency.exponentialRampToValueAtTime(40, t + 0.1);
+    g2.gain.setValueAtTime(0.4, t);
+    g2.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+    o2.connect(g2).connect(masterGain);
+    o2.start(t); o2.stop(t + 0.1);
     return;
   }
+  // If not wrong, play the slash sound for battle typing!
+  playSlashSound();
+  // Also keep a slight keyboard beep to maintain feedback
   playCorrectBeep();
 }
 function tick() {
@@ -119,8 +150,24 @@ function tick() {
 }
 function winSound() {
   if (!soundOn) return; ensureAudio(); if (!audioCtx) return;
-  const notes = [523.25, 659.25, 783.99, 1046.5], t0 = audioCtx.currentTime;
-  notes.forEach((f, i) => { const t = t0 + i * 0.09, o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = 'triangle'; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.28, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3); o.connect(g).connect(masterGain); o.start(t); o.stop(t + 0.32); });
+  const notes = [
+    {f: 523.25, d: 0.12}, {f: 523.25, d: 0.12}, {f: 523.25, d: 0.12},
+    {f: 523.25, d: 0.3}, {f: 415.30, d: 0.25}, {f: 466.16, d: 0.25}, {f: 523.25, d: 0.6}
+  ];
+  let t = audioCtx.currentTime;
+  notes.forEach((note) => {
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'square';
+    o.frequency.value = note.f;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.12, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.01, t + note.d);
+    o.connect(g).connect(masterGain);
+    o.start(t);
+    o.stop(t + note.d);
+    t += note.d - 0.02;
+  });
 }
 
 // Preloaded Audio Pool for low-latency overlapping click/beep sound effects
@@ -225,7 +272,8 @@ function kickMusic() { if (_firstGesture) return; _firstGesture = true; if (musi
 let userStats = {
   xp: 0, level: 1, gold: 0,
   unlocked_skills: ['homerow'], equipped_skills: ['homerow'],
-  max_wpm: 0, games_played: 0, avg_accuracy: 0
+  max_wpm: 0, games_played: 0, avg_accuracy: 0,
+  monsters_killed: {}
 };
 
 function handleDatabaseError(error) {
@@ -257,7 +305,8 @@ async function loadUserStats() {
         unlocked_skills: data.unlocked_skills || ['homerow'],
         equipped_skills: data.equipped_skills || ['homerow'],
         max_wpm: data.max_wpm || 0, games_played: data.games_played || 0,
-        avg_accuracy: data.avg_accuracy || 0
+        avg_accuracy: data.avg_accuracy || 0,
+        monsters_killed: data.monsters_killed || {}
       };
       applyTheme();
     }
@@ -274,11 +323,11 @@ async function createProfile() {
     const defaultStats = {
       id: currentUser.id, xp: 0, level: 1, gold: 0,
       unlocked_skills: ['homerow'], equipped_skills: ['homerow'],
-      max_wpm: 0, games_played: 0, avg_accuracy: 0
+      max_wpm: 0, games_played: 0, avg_accuracy: 0, monsters_killed: {}
     };
     const { error } = await dbClient.from('typing_user_stats').insert([defaultStats]);
     if (error) throw error;
-    userStats = { xp: 0, level: 1, gold: 0, unlocked_skills: ['homerow'], equipped_skills: ['homerow'], max_wpm: 0, games_played: 0, avg_accuracy: 0 };
+    userStats = { xp: 0, level: 1, gold: 0, unlocked_skills: ['homerow'], equipped_skills: ['homerow'], max_wpm: 0, games_played: 0, avg_accuracy: 0, monsters_killed: {} };
     applyTheme();
   } catch (e) {
     console.error('Profile creation failed:', e);
@@ -293,7 +342,7 @@ async function saveUserStats() {
       xp: userStats.xp, level: userStats.level, gold: userStats.gold,
       unlocked_skills: userStats.unlocked_skills, equipped_skills: userStats.equipped_skills,
       max_wpm: userStats.max_wpm, games_played: userStats.games_played,
-      avg_accuracy: userStats.avg_accuracy, updated_at: new Date().toISOString()
+      avg_accuracy: userStats.avg_accuracy, monsters_killed: userStats.monsters_killed, updated_at: new Date().toISOString()
     }).eq('id', currentUser.id);
     if (error) throw error;
   } catch (e) {
@@ -310,9 +359,10 @@ function loadLocalStats() {
       userStats = JSON.parse(local);
       if (!userStats.equipped_skills) userStats.equipped_skills = ['homerow'];
       if (!userStats.unlocked_skills) userStats.unlocked_skills = ['homerow'];
+      if (!userStats.monsters_killed) userStats.monsters_killed = {};
     } catch (e) { console.error(e); }
   } else {
-    userStats = { xp: 0, level: 1, gold: 0, unlocked_skills: ['homerow'], equipped_skills: ['homerow'], max_wpm: 0, games_played: 0, avg_accuracy: 0 };
+    userStats = { xp: 0, level: 1, gold: 0, unlocked_skills: ['homerow'], equipped_skills: ['homerow'], max_wpm: 0, games_played: 0, avg_accuracy: 0, monsters_killed: {} };
   }
   applyTheme();
 }
@@ -430,6 +480,7 @@ async function handleLogout() {
   if (confirmResult.isConfirmed) {
     if (dbClient) await dbClient.auth.signOut();
     currentUser = null;
+    localStorage.removeItem('typing_game_guest');
     localStorage.setItem('typing_game_logged_out', 'true');
     if (window.liff && liff.isLoggedIn()) {
       try {
@@ -488,6 +539,7 @@ async function initApp(options = {}) {
   if ($('btnTH')) $('btnTH').onclick = () => setLang('th');
   if ($('btnEN')) $('btnEN').onclick = () => setLang('en');
   if ($('btnSound')) $('btnSound').onclick = toggleSound;
+  if ($('btnFullscreen')) $('btnFullscreen').onclick = toggleFullscreen;
   if ($('btnMusic')) $('btnMusic').onclick = toggleMusic;
   if ($('btnLogout')) $('btnLogout').onclick = handleLogout;
 
@@ -510,7 +562,8 @@ async function initApp(options = {}) {
   // Check auth
   if (options.requireAuth) {
     currentUser = await checkSession();
-    if (!currentUser) {
+    const isGuest = localStorage.getItem('typing_game_guest') === 'true';
+    if (!currentUser && !isGuest) {
       window.location.href = 'login.html';
       return false;
     }
@@ -538,4 +591,14 @@ async function initApp(options = {}) {
   applyTheme();
   renderFooter();
   return true;
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(err => {
+      console.warn(`Fullscreen error: ${err.message}`);
+    });
+  } else {
+    document.exitFullscreen();
+  }
 }

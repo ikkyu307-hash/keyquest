@@ -194,6 +194,7 @@ async function handleEmailPasswordAuth(email, password) {
       });
 
       setTimeout(() => {
+        localStorage.removeItem('typing_game_guest');
         window.location.href = 'profile.html';
       }, 1500);
 
@@ -238,7 +239,8 @@ async function handleEmailPasswordAuth(email, password) {
         });
 
         setTimeout(() => {
-          window.location.href = 'profile.html';
+          localStorage.removeItem('typing_game_guest');
+        window.location.href = 'profile.html';
         }, 1800);
       } else {
         // Need email confirmation
@@ -349,7 +351,8 @@ async function handleLineLoginFlow(profile) {
     });
     
     setTimeout(() => {
-      window.location.href = 'profile.html';
+      localStorage.removeItem('typing_game_guest');
+        window.location.href = 'profile.html';
     }, 1500);
     
   } catch (err) {
@@ -432,6 +435,7 @@ async function bootAuth(mode) {
   if (btnGuest) {
     btnGuest.onclick = () => {
       localStorage.removeItem('typing_game_logged_out');
+      localStorage.setItem('typing_game_guest', 'true');
       window.location.href = 'game.html';
     };
   }

@@ -464,3 +464,10 @@
     padding-top: 12px;
   }
 }
+
+/* ===== KEYBOARD NAVIGATION ===== */
+.quest-card.selected {
+  border-color: var(--amber);
+  box-shadow: var(--glass-shadow), var(--glow-sm) var(--amber-glow);
+  transform: translateY(-2px);
+}

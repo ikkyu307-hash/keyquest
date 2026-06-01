@@ -145,6 +145,15 @@
 <symbol id="i-sword" viewBox="0 0 24 24" fill="none">
   <path d="M18 2h4v4h-4V2zm-4 4h4v4h-4V6zm-4 4h4v4h-4v-4zm-4 4h4v4H6v-4zm-2 4h2v2H4v-2zm-2 2h2v2H2v-2zm8 0h2v2h-2v-2z" fill="currentColor"/>
 </symbol>
+<symbol id="i-code" viewBox="0 0 24 24" fill="none">
+  <!-- Left bracket < -->
+  <path d="M8 6h-2v2H4v2h-2v4h2v2h2v2h2v-2H6v-2H4v-4h2v-2h2V6z" fill="currentColor"/>
+  <!-- Right bracket > -->
+  <path d="M16 6h2v2h2v2h2v4h-2v2h-2v2h-2v-2h2v-2h2v-4h-2v-2h-2V6z" fill="currentColor"/>
+  <!-- Slash / -->
+  <path d="M13 5h2v2h-2V5zm-1 4h2v2h-2V9zm-1 4h2v2h-2v-2zm-1 4h2v2h-2v-2zm-1 2h2v2H9v-2z" fill="currentColor"/>
+</symbol>
+
 
 `;
   // Inject sprite — works whether loaded in <head> or <body>
