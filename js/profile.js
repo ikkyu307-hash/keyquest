@@ -145,7 +145,6 @@ function renderProfilePage() {
   $('lblStartQuest').textContent = isTh ? 'เข้าสู่การเลือกด่าน (Start Quest)' : 'Start Quest';
   $('lblProfAcademy').textContent = isTh ? 'สำนักฝึกวิชา (Academy)' : 'Skill Academy';
   $('lblProfLogout').textContent = isTh ? 'ออกจากระบบ' : 'Log Out';
-  if ($('lblProfReset')) $('lblProfReset').textContent = isTh ? 'รีเซ็ตความก้าวหน้า' : 'Reset Progress';
 }
 
 function onLangChange() { renderProfilePage(); renderFooter(); }
@@ -165,72 +164,4 @@ async function bootProfile() {
   $('btnStartQuest').onclick = () => { window.location.href = 'game.html'; };
   $('btnProfileAcademy').onclick = () => { window.location.href = 'academy.html'; };
   $('btnProfileLogout').onclick = handleLogout;
-  
-  if ($('btnProfileReset')) {
-    $('btnProfileReset').onclick = async () => {
-      const isTh = lang === 'th';
-      const confirmResult = await Swal.fire({
-        title: isTh ? 'ยืนยันการรีเซ็ตข้อมูล?' : 'Reset All Progress?',
-        text: isTh ? 'เลเวล ทอง สถิติ และความก้าวหน้าทั้งหมดจะถูกล้างค่าใหม่ทั้งหมดและไม่สามารถกู้คืนได้' : 'Your level, gold, stats, and all progress will be permanently reset.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: 'var(--coral)',
-        cancelButtonColor: '#333',
-        confirmButtonText: isTh ? 'ยืนยันรีเซ็ต' : 'Yes, Reset',
-        cancelButtonText: isTh ? 'ยกเลิก' : 'Cancel',
-        background: '#1a1a2e', color: '#fff'
-      });
-
-      if (confirmResult.isConfirmed) {
-        // 1. Reset stats object
-        userStats = {
-          xp: 0, level: 1, gold: 0,
-          unlocked_skills: ['homerow'], equipped_skills: ['homerow'],
-          max_wpm: 0, games_played: 0, avg_accuracy: 0
-        };
-
-        // 2. Clear local storage keys
-        localStorage.removeItem('typing_game_local_stats');
-        localStorage.removeItem('kq_tutorial_progress');
-
-        // Clear quest progress keys
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && (key.startsWith('kq_quest_progress_') || key.startsWith('kq_quest_claimed_'))) {
-            localStorage.removeItem(key);
-            i--; // Adjust index since we removed an item
-          }
-        }
-
-        // 3. Sync to Supabase if logged in
-        if (dbClient && currentUser) {
-          try {
-            await dbClient.from('typing_user_stats').update({
-              xp: 0, level: 1, gold: 0,
-              unlocked_skills: ['homerow'], equipped_skills: ['homerow'],
-              max_wpm: 0, games_played: 0, avg_accuracy: 0,
-              updated_at: new Date().toISOString()
-            }).eq('id', currentUser.id);
-
-            // Also delete quest progress
-            await dbClient.from('quest_progress').delete().eq('user_id', currentUser.id);
-          } catch (e) {
-            console.warn('Failed to sync reset to Supabase:', e);
-          }
-        }
-
-        // Apply visual updates & show success alert
-        winSound();
-        applyTheme();
-        renderProfilePage();
-
-        Swal.fire({
-          title: isTh ? 'รีเซ็ตสำเร็จ!' : 'Reset Successful!',
-          text: isTh ? 'ประวัติการเล่นและเลเวลของคุณถูกรีเซ็ตเรียบร้อยแล้ว' : 'Your progress has been reset successfully.',
-          icon: 'success',
-          background: '#1a1a2e', color: '#fff', confirmButtonColor: 'var(--amber)'
-        });
-      }
-    };
-  }
 }
