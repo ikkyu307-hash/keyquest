@@ -218,6 +218,41 @@ function renderGuide() {
           <li><strong>แหล่งฝึกซ้อมเสริม:</strong> นอกเหนือจากการพิมพ์เล่นในคีย์เควสต์ คุณสามารถใช้เว็บไซต์ฝึกพิมพ์สัมผัส เช่น TypingStudy, Keybr, 10FastFingers หรือ TypingClub เพื่อช่วยประเมินความเร็ว (WPM) และชี้เป้าจุดที่นิ้วของคุณยังทำได้ไม่ดี</li>
         </ul>
       </div>
+
+      <!-- WPM Skill Benchmarks & Practice Outline -->
+      <h3 style="margin-top: 36px;">📊 เกณฑ์วัดระดับและแนวทางการฝึกฝน (Benchmarks & Training Layout)</h3>
+
+      <div class="guide-card">
+        <h4>เกณฑ์การวัดระดับความสามารถด้วยความเร็ว (WPM)</h4>
+        <p class="guide-card-p">การวัดผลการฝึกพิมพ์ใช้เกณฑ์ "คำต่อนาที" (Words Per Minute หรือ WPM) เพื่อแบ่งระดับทักษะและเป้าหมายการฝึก:</p>
+        <ul class="guide-sub-list">
+          <li><strong>ระดับเริ่มต้น (0 ถึง 20 WPM):</strong> มุ่งเน้นวางนิ้วตามตำแหน่งแป้นเหย้าให้ถูกต้อง ก้าวนิ้วช้าๆ และมีกฎเหล็กคือ <strong>ห้ามก้มมองแป้นโดยเด็ดขาด</strong></li>
+          <li><strong>ระดับพื้นฐาน (21 ถึง 40 WPM):</strong> ความเร็วเฉลี่ยทั่วไป เน้นสร้างความคุ้นเคยกับปุ่มแถวบนและแถวล่าง และรักษาจังหวะการพิมพ์ให้สม่ำเสมอ</li>
+          <li><strong>ระดับปานกลาง (41 ถึง 60 WPM):</strong> <strong>อัตราความเร็วขั้นต่ำที่เหมาะสมสำหรับการทำงานในสำนักงาน</strong> ควรเลิกเดาตำแหน่งปุ่ม และเริ่มจดจำกลุ่มคำศัพท์ที่ใช้บ่อย</li>
+          <li><strong>ระดับรวดเร็ว (61 ถึง 80 WPM):</strong> สูงกว่ามาตรฐานทั่วไป เหมาะสมกับงานเอกสารและงานป้อนข้อมูลที่ต้องทำเป็นประจำ</li>
+          <li><strong>ระดับเชี่ยวชาญ (80 WPM ขึ้นไป):</strong> ทักษะระดับมืออาชีพ (เช่น นักถอดเสียง หรือโปรแกรมเมอร์) โดยต้องรักษา<strong>ความแม่นยำในระดับร้อยละ 95 ขึ้นไป</strong></li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h4>แนวทางการจัดรูปแบบแบบฝึกหัด</h4>
+        <p class="guide-card-p">เพื่อให้สมองและกล้ามเนื้อจดจำได้อย่างมีประสิทธิภาพ ลำดับการฝึกควรเป็นไปตามขั้นตอนดังนี้:</p>
+        <ul class="guide-sub-list">
+          <li><strong>เริ่มจากแป้นเหย้าและคำง่ายๆ:</strong> เริ่มต้นวางนิ้วบนแป้นเหย้า (ฟ ห ก ด ่ า ส ว) และฝึกคำง่ายๆ ที่ใช้บ่อยโดยไม่ต้องกด Shift (เช่น <i>การ, หาย, ฟอง, อาหาร, ว่าง, ว่องไว</i>) เพื่อสร้างรากฐาน</li>
+          <li><strong>การผสมอักขระขั้นก้าวหน้า:</strong> พิมพ์สลับมือซ้าย-ขวา สลับการใช้นิ้วที่แข็งแรง (นิ้วชี้, นิ้วกลาง) กับนิ้วที่อ่อนแอ (นิ้วนาง, นิ้วก้อย) และสลับแถวบน-ล่าง</li>
+          <li><strong>กลยุทธ์พิมพ์อักขระหน้ากระดาษ (Single-Character Drill):</strong> ฝึกพิมพ์อักษรตัวเดียวกดซ้ำๆ (เช่น ตัว ฟ) ให้ได้ความยาวเต็มหน้าจอโดยไม่มองแป้น เพื่อจดจำตำแหน่งลงลึกในระดับจิตใต้สำนึก</li>
+          <li><strong>ฝึกพิมพ์บทความหรือสถานการณ์จริง:</strong> ขยับไปพิมพ์ประโยคยาวๆ นิทาน ข่าวสาร หรือเนื้อเพลง เพื่อฝึกฝนการใช้เครื่องหมายวรรคตอนและการกด Shift</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h4>เกณฑ์ด้านเวลาและวินัยในการฝึกซ้อม</h4>
+        <ul class="guide-sub-list">
+          <li><strong>ต้องผ่านด่านแบบไร้ข้อผิดพลาด:</strong> ฝึกฝนซ้ำๆ จนกว่าจะพิมพ์ผ่านด่านด้วยความแม่นยำเกิน 90% (หรือไม่มีที่ผิดเลย) จึงค่อยขยับไปบทถัดไป</li>
+          <li><strong>ฝึกสั้นๆ แต่ทำทุกวัน:</strong> สมองจะประมวลผลดีที่สุดเมื่อฝึก <strong>วันละ 15 ถึง 30 นาที สัปดาห์ละ 5 วัน</strong> หลีกเลี่ยงการฝึกแบบมาราธอนยาวๆ ที่ทำให้นิ้วล้าและขาดสมาธิ</li>
+          <li><strong>เทคนิคเสริม:</strong> บังคับตัวเองด้วยคีย์บอร์ดที่ไม่มีสกรีนตัวอักษรไทย (No-Label Keycaps) เพื่อใช้สัมผัสสัมบูรณ์ หรือฝึกพิมพ์ผ่านเกม/แชทคุยเพื่อความเพลิดเพลินธรรมชาติ</li>
+        </ul>
+      </div>
     `;
   } else {
     container.innerHTML = `
@@ -281,6 +316,41 @@ function renderGuide() {
         <ul class="guide-sub-list">
           <li><strong>Duration:</strong> Practice 15 - 30 minutes daily. Consistency helps the brain process and retain motor skills much better.</li>
           <li><strong>Extra Tools:</strong> Supplement your practice on sites like TypingStudy, Keybr, 10FastFingers, or TypingClub to track your WPM and identify weak spots.</li>
+        </ul>
+      </div>
+
+      <!-- WPM Skill Benchmarks & Practice Outline -->
+      <h3 style="margin-top: 36px;">📊 Benchmarks & Structured Training Guidelines</h3>
+
+      <div class="guide-card">
+        <h4>Speed Benchmarks (WPM)</h4>
+        <p class="guide-card-p">Typing speed is measured in Words Per Minute (WPM) to outline skill progression and training targets:</p>
+        <ul class="guide-sub-list">
+          <li><strong>Beginner (0-20 WPM):</strong> Focus on placing fingers correctly on the Home Row and slow, deliberate typing. Golden rule: <strong>Never look down at the keyboard.</strong></li>
+          <li><strong>Basic (21-40 WPM):</strong> Average general typing speed. Focus on getting comfortable with the top and bottom rows while keeping a steady rhythm.</li>
+          <li><strong>Intermediate (41-60 WPM):</strong> The <strong>minimum standard speed for office environments</strong>. Stop guessing key coordinates and start memorizing frequent word groups.</li>
+          <li><strong>Advanced (61-80 WPM):</strong> Higher than average. Highly suitable for data entry, transcription, and general heavy office work.</li>
+          <li><strong>Expert (80+ WPM):</strong> Professional skill levels (transcribers, programmers, writers). Requires maintaining **accuracy levels of 95% or higher**.</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h4>Structured Practice Flow</h4>
+        <p class="guide-card-p">To build muscle memory efficiently, exercises should follow this logical progression:</p>
+        <ul class="guide-sub-list">
+          <li><strong>Home Row & Easy Words:</strong> Start on the home row and type simple, common lowercase words to construct a firm foundation.</li>
+          <li><strong>Advanced Layout Mixes:</strong> Practice alternating left-right hands, using strong fingers (index, middle) alongside weaker fingers (ring, pinky), and jumping rows.</li>
+          <li><strong>Single-Character Drills:</strong> Practice typing a single character repeatedly across lines without looking down to lock in the absolute position of that key.</li>
+          <li><strong>Real-World Articles:</strong> Switch to typing paragraphs, quotes, news articles, and songs to get used to uppercase letters, punctuation, and shifts.</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h4>Time Management & Discipline</h4>
+        <ul class="guide-sub-list">
+          <li><strong>Master Before Advancing:</strong> Re-run lessons until you complete them with 90%+ accuracy (or zero errors) before moving to the next level.</li>
+          <li><strong>Short, Daily Practice:</strong> The brain learns best in short blocks. Practice **15 to 30 minutes a day, 5 days a week** instead of long marathon typing.</li>
+          <li><strong>Pro Trick (Cold Water Method):</strong> Use a blank/non-labeled keyboard to force touch typing, or play typing games and chat online to keep practice engaging.</li>
         </ul>
       </div>
     `;
