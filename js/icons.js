@@ -1,7 +1,7 @@
 /* ====================================================================
-   icons.js — KeyQuest Unified Icon Sprite (RPG / Keycap Style)
-   Inject once, use everywhere. Designed to match the Sword-in-Keycap logo.
-   Stroke-width: 2.2 · Caps: round · Joins: round
+   icons.js — KeyQuest Unified Icon Sprite (16-bit Retro Pixel-Art Style)
+   Inject once, use everywhere. Redesigned to match the pixel-art RPG aesthetic.
+   Shape-rendering: crispEdges forces integer-pixel alignments.
    ==================================================================== */
 (function(){
   const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
@@ -10,189 +10,140 @@
   svg.innerHTML = `
 
 <!-- ═══════════ BRAND ═══════════ -->
-<symbol id="i-logo" viewBox="0 0 128 128" fill="none" stroke="none">
-  <rect x="12" y="18" width="108" height="100" rx="22" fill="#2a1602" transform="translate(4,6)"/>
-  <rect x="12" y="18" width="108" height="100" rx="22" fill="#b5630a"/>
-  <rect x="18" y="14" width="96" height="88" rx="18" fill="url(#logoGrad)"/>
-  <rect x="22" y="16" width="88" height="28" rx="14" fill="rgba(255,255,255,0.35)"/>
-  <g transform="translate(64,64) rotate(-45)">
-    <rect x="-3" y="-38" width="6" height="48" rx="1" fill="#f4ecdc" stroke="#2a1602" stroke-width="2"/>
-    <polygon points="0,-42 -5,-38 5,-38" fill="#f4ecdc" stroke="#2a1602" stroke-width="2" stroke-linejoin="round"/>
-    <rect x="-12" y="8" width="24" height="6" rx="2" fill="#54d6ff" stroke="#2a1602" stroke-width="2"/>
-    <rect x="-3" y="14" width="6" height="14" rx="1" fill="#5fe6a8" stroke="#2a1602" stroke-width="2"/>
-    <circle cx="0" cy="32" r="5" fill="#ff5d6c" stroke="#2a1602" stroke-width="2"/>
-  </g>
-  <defs><linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffc863"/><stop offset="100%" stop-color="#ffb43d"/></linearGradient></defs>
+<symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="none">
+  <!-- Small fallback pixel-art sword-in-keycap logo -->
+  <rect x="3" y="3" width="18" height="18" rx="2" fill="#b5630a" />
+  <rect x="5" y="5" width="14" height="14" rx="1" fill="#ffb43d" />
+  <path d="M11 7h2v6h-2V7zm-2 6h6v2H9v-2zm2 2h2v2h-2v-2z" fill="#1a162a" />
 </symbol>
 
 <!-- ═══════════ NAVIGATION ═══════════ -->
-<symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5" stroke-width="2.4"/><path d="M12 19l-7-7 7-7" stroke-width="2.4"/></symbol>
-<symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14" stroke-width="2.4"/><path d="M12 5l7 7-7 7" stroke-width="2.4"/></symbol>
-<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.7 9.7 0 0 0-6.7 2.7L3 8" stroke-width="2.2"/><path d="M3 3v5h5" stroke-width="2.2"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24" fill="none">
+  <path d="M15 4h-2v2h-2v2H9v2H7v4h2v2h2v2h2v2h2v-4H9v-2h8v-4H9V8h6V4z" fill="currentColor"/>
+</symbol>
+
+<symbol id="i-next" viewBox="0 0 24 24" fill="none">
+  <path d="M9 4h2v2h2v2h2v2h2v4h-2v2h-2v2h-2v2H9v-4h6v-2H7v-4h8V8H9V4z" fill="currentColor"/>
+</symbol>
+
+<symbol id="i-refresh" viewBox="0 0 24 24" fill="none">
+  <path d="M6 4h12v2H6V4zm12 2h2v6h-2V6h-2v2h2V6zm-12 6h2v6H6v-6zm2 6h8v-2H8v2zm8-2h2v-4h-2v4zm-6-10h4v2h-4V6z" fill="currentColor"/>
+  <path d="M12 6h6v6h-2V8h-4V6z" fill="currentColor" />
+</symbol>
 
 <!-- ═══════════ GAME STATS (RPG Style) ═══════════ -->
-<!-- Speedometer / WPM — bold gauge with sword-like needle -->
-<symbol id="i-gauge" viewBox="0 0 24 24">
-  <path d="M3.34 19a10 10 0 1 1 17.32 0" stroke-width="2.4"/>
-  <path d="M12 14l3.5-3.5" stroke-width="2.8" stroke-linecap="round"/>
-  <circle cx="12" cy="14" r="1.5" fill="currentColor" stroke="none"/>
+<symbol id="i-gauge" viewBox="0 0 24 24" fill="none">
+  <path d="M3 14h2v-2H3v2zm2-2h2v-2H5v2zm2-2h2v-2H7v2zm2-2h6v2H9V8zm6 0h2v2h-2V8zm2 2h2v2h-2v-2zm2 2h2v2h-2v-2zM11 12h2v4h-2v-4zm2-2h4v2h-4v-2z" fill="currentColor"/>
 </symbol>
 
-<!-- Crosshair / Accuracy — double ring with center dot -->
-<symbol id="i-target" viewBox="0 0 24 24">
-  <circle cx="12" cy="12" r="9" stroke-width="2"/>
-  <circle cx="12" cy="12" r="5" stroke-width="2"/>
-  <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/>
-  <path d="M12 3v2M12 19v2M3 12h2M19 12h2" stroke-width="2"/>
+<symbol id="i-target" viewBox="0 0 24 24" fill="none">
+  <path d="M11 2h2v4h-2V2zm0 16h2v4h-2v-4zm-9-7h4v2H2v-2zm16 0h4v2h-4v-2zm-7 0h2v2h-2v-2zM7 5h10v2H7V5zm10 2h2v10h-2V7zM7 17h10v2H7v-2zm-4-8h2v6H3V9zm16 0h2v6h-2V9z" fill="currentColor"/>
 </symbol>
 
-<!-- Clock / Timer — bold clock face -->
-<symbol id="i-clock" viewBox="0 0 24 24">
-  <circle cx="12" cy="12" r="9.5" stroke-width="2.2"/>
-  <path d="M12 6.5v5.5l3.5 2" stroke-width="2.4" stroke-linecap="round"/>
+<symbol id="i-clock" viewBox="0 0 24 24" fill="none">
+  <path d="M9 2h6v2H9V2zm7 2h2v2h-2V4zM5 8h2v8H5V8zm2-2h2V4H7v2zm10 2h2v8h-2V8zm-2-2h-2V4h2v2zm-4 4h2v4h4v2h-6v-6zm3 10H9v2h6v-2zm-8-2H5v-2H3v4h4v-2zm12 0h-2v2h-2v2h4v-4z" fill="currentColor"/>
 </symbol>
 
-<!-- Fire / Combo — dynamic flame -->
-<symbol id="i-flame" viewBox="0 0 24 24">
-  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z" stroke-width="2.2"/>
+<symbol id="i-flame" viewBox="0 0 24 24" fill="none">
+  <path d="M11 2h2v2h-2V2zm-2 2h2v2H9V4zm6 0h-2v2h2V4zm-8 4h2v2H7V8zm10 0h-2v2h2V8zm-12 4h2v4H5v-4zm14 0h-2v4h2v-4zm-12 6h10v2H7v-2zm2 2h6v2H9v-2zm2-10h2v6h-2v-6z" fill="currentColor"/>
 </symbol>
 
-<!-- Star / Score — RPG-style 5-point star -->
-<symbol id="i-star" viewBox="0 0 24 24">
-  <polygon points="12 2 15.1 8.3 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 8.9 8.3 12 2" stroke-width="2"/>
+<symbol id="i-star" viewBox="0 0 24 24" fill="none">
+  <path d="M11 2h2v4h-2V2zm-2 4h6v2H9V6zm-2 2h10v2H7V8zm-4 2h18v2H3v-2zm2 2h14v2H5v-2zm2 2h10v2H7v-2zm-2 2h2v6H5v-6zm12 0h2v6h-2v-6z" fill="currentColor"/>
 </symbol>
 
-<!-- Trophy — ornate cup -->
-<symbol id="i-trophy" viewBox="0 0 24 24">
-  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18" stroke-width="2.2"/>
-  <path d="M4 22h16" stroke-width="2.2"/>
-  <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" stroke-width="2"/>
-  <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" stroke-width="2.2"/>
+<symbol id="i-trophy" viewBox="0 0 24 24" fill="none">
+  <path d="M3 4h18v2H3V4zm2 2h14v4H5V6zm2 4h10v2H7v-2zm2 2h6v2H9v-2zm2 2h2v4h-2v-4zm-5 4h8v2H9v-2zm-6-12h2v6H3V8zm16 0h2v6h-2V8z" fill="currentColor"/>
 </symbol>
 
-<!-- Medal — quest badge -->
-<symbol id="i-medal" viewBox="0 0 24 24">
-  <circle cx="12" cy="14" r="6" stroke-width="2.2"/>
-  <path d="M8.5 8 6 3M15.5 8 18 3M9 3h6" stroke-width="2"/>
-  <path d="M12 11v4" stroke-width="2.4" stroke-linecap="round"/>
-  <path d="M10 13.5l4 1" stroke-width="2" stroke-linecap="round"/>
+<symbol id="i-medal" viewBox="0 0 24 24" fill="none">
+  <path d="M9 2h6v2H9V2zm-2 2h10v2H7V4zm2 2h6v4H9V6zm-4 4h14v8H5v-8zm4 8h6v2H9v-2z" fill="currentColor"/>
 </symbol>
 
 <!-- ═══════════ DIFFICULTY ICONS ═══════════ -->
-<!-- Leaf / Easy — gentle sprout -->
-<symbol id="i-leaf" viewBox="0 0 24 24">
-  <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" stroke-width="2.2"/>
-  <path d="M2 21c0-3 1.85-5.36 5.08-6" stroke-width="2.2"/>
+<symbol id="i-leaf" viewBox="0 0 24 24" fill="none">
+  <path d="M10 4h4v2h-4V4zm-2 2h8v2H8V6zm-2 2h12v2H6V8zm-2 2h14v6H4v-6zm4 6h8v2H8v-2zm2 2h4v2-4v-2z" fill="currentColor"/>
 </symbol>
 
-<!-- Bolt / Medium — lightning strike -->
-<symbol id="i-bolt" viewBox="0 0 24 24">
-  <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z" stroke-width="2"/>
+<symbol id="i-bolt" viewBox="0 0 24 24" fill="none">
+  <path d="M14 2h-4v6h4V2zm-2 6H8v4h4V8zm-2 4H6v6h4v-6zm6 0h-4v4h4v-4zm-2 4h-4v4h4v-4z" fill="currentColor"/>
 </symbol>
 
-<!-- Skull / Extreme — danger icon -->
-<symbol id="i-skull" viewBox="0 0 24 24">
-  <circle cx="12" cy="10" r="8" stroke-width="2.2"/>
-  <path d="M9 10h.01M15 10h.01" stroke-width="3" stroke-linecap="round"/>
-  <path d="M8 18h8v2a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2z" stroke-width="2"/>
-  <path d="M10 18v4M14 18v4" stroke-width="2"/>
+<symbol id="i-skull" viewBox="0 0 24 24" fill="none">
+  <path d="M8 2h8v2H8V2zm-2 2h12v2H6V4zm-2 2h16v6H4V6zm2 6h12v4H6v-4zm2 4h8v2H8v-2zm-2-6h2v2H6v-2zm10 0h2v2h-2v-2z" fill="currentColor"/>
 </symbol>
 
 <!-- ═══════════ UI ACTIONS ═══════════ -->
-<!-- Keyboard — keycap style -->
-<symbol id="i-kb" viewBox="0 0 24 24">
-  <rect x="2" y="4" width="20" height="16" rx="3" stroke-width="2.2"/>
-  <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01" stroke-width="2.8" stroke-linecap="round"/>
-  <path d="M7 16h10" stroke-width="2.2" stroke-linecap="round"/>
+<symbol id="i-kb" viewBox="0 0 24 24" fill="none">
+  <path d="M2 4h20v14H2V4zm2 2h16v10H4V6zm2 2h2v2H6V8zm4 0h2v2h-2V8zm4 0h2v2h-2V8zm-8 4h10v2H6v-2z" fill="currentColor"/>
 </symbol>
 
-<!-- Globe / Language — with meridians -->
-<symbol id="i-globe" viewBox="0 0 24 24">
-  <circle cx="12" cy="12" r="10" stroke-width="2"/>
-  <path d="M2 12h20" stroke-width="1.8"/>
-  <path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20" stroke-width="1.8"/>
+<symbol id="i-globe" viewBox="0 0 24 24" fill="none">
+  <path d="M8 2h8v2H8V2zm-4 2h12v2H4V4zm-2 2h20v12H2V6zm4 12h12v2H6v-2zm2 2h8v2H8v-2z" fill="currentColor"/>
 </symbol>
 
-<!-- Lightbulb / Hint — idea lamp -->
-<symbol id="i-bulb" viewBox="0 0 24 24">
-  <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" stroke-width="2.2"/>
-  <path d="M9 18h6" stroke-width="2.2" stroke-linecap="round"/>
-  <path d="M10 22h4" stroke-width="2.2" stroke-linecap="round"/>
+<symbol id="i-bulb" viewBox="0 0 24 24" fill="none">
+  <path d="M10 2h4v2h-4V2zm-2 2h8v2H8V4zm-2 2h12v6H6V6zm2 6h8v2H8v-2zm2 2h4v4h-4v-4zm0 4h4v2-4v-2z" fill="currentColor"/>
 </symbol>
 
-<!-- Check — bold check mark -->
-<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24" fill="none">
+  <path d="M19 6l-9 9-4-4-2 2 6 6 11-11-2-2z" fill="currentColor"/>
+</symbol>
 
-<!-- Lock — padlock -->
-<symbol id="i-lock" viewBox="0 0 24 24">
-  <rect x="3" y="11" width="18" height="11" rx="3" stroke-width="2.2"/>
-  <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke-width="2.2"/>
-  <circle cx="12" cy="16.5" r="1.5" fill="currentColor" stroke="none"/>
+<symbol id="i-lock" viewBox="0 0 24 24" fill="none">
+  <path d="M8 4h8v4H8V4zm-2 4h12v2H6V8zm-3 2h18v10H3V10zm2 2h14v6H5v-6zm6 1h2v2h-2v-2z" fill="currentColor"/>
 </symbol>
 
 <!-- ═══════════ AUDIO ═══════════ -->
-<symbol id="i-vol" viewBox="0 0 24 24">
-  <path d="M11 5 6 9H2v6h4l5 4z" stroke-width="2.2" stroke-linejoin="round"/>
-  <path d="M15.5 8.5a5 5 0 0 1 0 7" stroke-width="2.2"/>
-  <path d="M19 5a9 9 0 0 1 0 14" stroke-width="2"/>
+<symbol id="i-vol" viewBox="0 0 24 24" fill="none">
+  <path d="M4 8h4v8H4V8zm4-2h2v12H8V6zm4-2h2v16h-2V4zm4 4h2v8h-2V8zm2-2h2v12h-2V6z" fill="currentColor"/>
 </symbol>
-<symbol id="i-mute" viewBox="0 0 24 24">
-  <path d="M11 5 6 9H2v6h4l5 4z" stroke-width="2.2" stroke-linejoin="round"/>
-  <path d="m22 9-6 6" stroke-width="2.4"/><path d="m16 9 6 6" stroke-width="2.4"/>
+
+<symbol id="i-mute" viewBox="0 0 24 24" fill="none">
+  <path d="M4 8h4v8H4V8zm4-2h2v12H8V6zm4-2h2v16h-2V4zm6 4l4 4m0-4l-4 4" stroke="currentColor" stroke-width="2"/>
 </symbol>
-<symbol id="i-music" viewBox="0 0 24 24">
-  <path d="M9 18V5l12-2v13" stroke-width="2.2"/>
-  <circle cx="6" cy="18" r="3" stroke-width="2"/><circle cx="18" cy="16" r="3" stroke-width="2"/>
+
+<symbol id="i-music" viewBox="0 0 24 24" fill="none">
+  <path d="M14 2h6v2h-6V2zm0 2V12h-4v4h4v-4h6V4h-6zm-6 8h4v4H8v-4z" fill="currentColor"/>
 </symbol>
-<symbol id="i-music-off" viewBox="0 0 24 24">
-  <path d="M9 18V5l12-2v6" stroke-width="2.2"/>
-  <circle cx="6" cy="18" r="3" stroke-width="2"/>
-  <path d="m2 3 20 20" stroke-width="2.4"/>
+
+<symbol id="i-music-off" viewBox="0 0 24 24" fill="none">
+  <path d="M14 2h6v2h-6V2zm0 2v4h-2V4h2zm2 4h4v4h-4V8zM8 12h4v4H8v-4z" fill="currentColor"/>
+  <path d="M4 4l16 16" stroke="currentColor" stroke-width="2"/>
 </symbol>
 
 <!-- ═══════════ USER ═══════════ -->
-<symbol id="i-user" viewBox="0 0 24 24">
-  <circle cx="12" cy="8" r="4.5" stroke-width="2.2"/>
-  <path d="M4 21a8 8 0 0 1 16 0" stroke-width="2.2"/>
+<symbol id="i-user" viewBox="0 0 24 24" fill="none">
+  <path d="M8 2h8v6H8V2zm-2 6h12v2H6V8zm-3 4h18v8H3v-8z" fill="currentColor"/>
 </symbol>
-<symbol id="i-logout" viewBox="0 0 24 24">
-  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-width="2.2"/>
-  <path d="M16 17l5-5-5-5" stroke-width="2.4"/><path d="M21 12H9" stroke-width="2.4"/>
+
+<symbol id="i-logout" viewBox="0 0 24 24" fill="none">
+  <path d="M3 4h8v2H3v12h8v2H3c-1 0-2-1-2-2V6c0-1 1-2 2-2zm12 3h2v3h4v2h-4v3h-2v-8zm2 3l3 2-3 2v-4z" fill="currentColor"/>
 </symbol>
 
 <!-- ═══════════ HAND / TOUCH TYPING ═══════════ -->
-<symbol id="i-hand" viewBox="0 0 24 24">
-  <path d="M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v7M10 10.5V5a2 2 0 0 0-4 0v9" stroke-width="2"/>
-  <path d="M7 15v-2a2 2 0 0 0-4 0v4a8 8 0 0 0 16 0v-5a2 2 0 0 0-4 0" stroke-width="2"/>
+<symbol id="i-hand" viewBox="0 0 24 24" fill="none">
+  <path d="M6 8h2v8H6V8zm4-4h2v12h-2V4zm4 2h2v10h-2V6zm4 4h2v6h-2v-6zm-14 8h16v2H4v-2z" fill="currentColor"/>
 </symbol>
 
 <!-- ═══════════ PLATFORM DETECTION ═══════════ -->
-<symbol id="i-apple" viewBox="0 0 24 24"><path d="M17.5 12.5c0-2.4 2-3.5 2.1-3.6-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.6.9s-1.9-.9-3.1-.8c-1.6 0-3.1.9-3.9 2.4-1.7 2.9-.4 7.2 1.2 9.5.8 1.1 1.7 2.4 3 2.3 1.2 0 1.6-.8 3.1-.8s1.8.8 3.1.8 2.1-1.1 2.9-2.2c.9-1.3 1.3-2.6 1.3-2.6s-2.5-1-2.6-3.7zM15 5.2c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.1 1.8-1 2.9 1.1.1 2.2-.6 2.8-1.4z" fill="currentColor" stroke="none"/></symbol>
-<symbol id="i-win" viewBox="0 0 24 24"><path d="M3 5.5 10.5 4.4v7.1H3zM10.5 4.2 21 2.7v8.8h-10.5zM3 12.5h7.5v7.1L3 18.5zM10.5 12.5H21v8.8l-10.5-1.5z" fill="currentColor" stroke="none"/></symbol>
-<symbol id="i-linux" viewBox="0 0 24 24"><path d="M9 4.5c0-1.4.9-2.5 3-2.5s3 1.1 3 2.5c0 1.8 1.3 2.9 1.3 5.5 0 1.5-.6 2.6-.3 3.8.3 1.4 1.9 2.6 1.9 4.2 0 1.5-1.2 2.5-3 2.5-1.3 0-1.9-.7-3.1-.7s-1.8.7-3.1.7c-1.8 0-3-1-3-2.5 0-1.6 1.6-2.8 1.9-4.2.3-1.2-.3-2.3-.3-3.8C8.2 7.4 9 6.3 9 4.5z" stroke-width="2"/><circle cx="10.5" cy="7" r=".7" fill="currentColor"/><circle cx="13.5" cy="7" r=".7" fill="currentColor"/></symbol>
-<symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2.5" stroke-width="2.2"/><path d="M11 18h2" stroke-width="2.4" stroke-linecap="round"/></symbol>
+<symbol id="i-apple" viewBox="0 0 24 24" fill="none"><path d="M12 2h2v4h-2V2zM6 8h12v12H6V8zm2 2h8v8H8v-8zm1-5h4v2H9V5z" fill="currentColor"/></symbol>
+<symbol id="i-win" viewBox="0 0 24 24" fill="none"><path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zm-10 10h8v8H3v-8zm10 0h8v8h-8v-8z" fill="currentColor"/></symbol>
+<symbol id="i-linux" viewBox="0 0 24 24" fill="none"><path d="M6 3h12v12H6V3zm2 2h8v8H8V5zm1 11h6v3H9v-3z" fill="currentColor"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24" fill="none"><path d="M6 2h12v20H6V2zm2 2h8v14H8V4zm3 15h2v2h-2v-2z" fill="currentColor"/></symbol>
 
 <!-- ═══════════ MISC ═══════════ -->
-<symbol id="i-shield" viewBox="0 0 24 24">
-  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2.2"/>
-  <path d="M9 12l2 2 4-4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<symbol id="i-shield" viewBox="0 0 24 24" fill="none">
+  <path d="M4 3h16v2H4V3zm0 2h2v8h-2V5zm14 0h2v8h-2V5zm-12 8h10v2H6v-2zm2 2h6v2H8v-2zm2 2h4v2h-4v-2z" fill="currentColor"/>
 </symbol>
-<symbol id="i-gift" viewBox="0 0 24 24">
-  <rect x="3" y="8" width="18" height="4" rx="1.5" stroke-width="2.2"/>
-  <rect x="5" y="12" width="14" height="9" rx="1.5" stroke-width="2"/>
-  <path d="M12 8v13" stroke-width="2"/>
-  <path d="M7.5 8C7.5 8 7 4 9.5 4s3.5 4 2.5 4M16.5 8c0 0 .5-4-2-4s-3.5 4-2.5 4" stroke-width="2"/>
+<symbol id="i-gift" viewBox="0 0 24 24" fill="none">
+  <path d="M4 6h16v4H4V6zm2 4h12v10H6V10zm4-6h4v2h-4V4zm-2 2h8v2H8V6z" fill="currentColor"/>
 </symbol>
-<symbol id="i-scroll" viewBox="0 0 24 24">
-  <path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 0 0-2 2v2h12v12" stroke-width="2.2"/>
-  <path d="M11 7h4M11 11h2" stroke-width="2.2" stroke-linecap="round"/>
+<symbol id="i-scroll" viewBox="0 0 24 24" fill="none">
+  <path d="M6 4h12v2H6V4zm12 2h2v12h-2V6zM6 18h12v2H6v-2zM4 6h2v12H4V6z" fill="currentColor"/>
 </symbol>
-<symbol id="i-sword" viewBox="0 0 24 24">
-  <path d="M14.5 17.5L3 6V3h3l11.5 11.5" stroke-width="2.2" stroke-linecap="round"/>
-  <path d="M13 19l6-6" stroke-width="2.2"/>
-  <path d="M16 16l4 4" stroke-width="2.4" stroke-linecap="round"/>
-  <path d="M19 21l2-2" stroke-width="2.4" stroke-linecap="round"/>
-  <path d="M8.5 8.5l-3 3" stroke-width="2"/>
+<symbol id="i-sword" viewBox="0 0 24 24" fill="none">
+  <path d="M18 2h4v4h-4V2zm-4 4h4v4h-4V6zm-4 4h4v4h-4v-4zm-4 4h4v4H6v-4zm-2 4h2v2H4v-2zm-2 2h2v2H2v-2zm8 0h2v2h-2v-2z" fill="currentColor"/>
 </symbol>
 
 `;

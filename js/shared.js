@@ -80,27 +80,32 @@ function ensureAudio() {
 }
 
 function thock(deep, wrong) {
-  if (!soundOn) return; ensureAudio(); if (!audioCtx) return;
-  const t = audioCtx.currentTime;
-  const o = audioCtx.createOscillator(), og = audioCtx.createGain();
-  o.type = 'triangle';
-  const isThock = userStats && userStats.equipped_skills && userStats.equipped_skills.includes('thocksound');
-  const pitchMult = isThock ? 0.65 : 1.0;
-  const base = (deep ? 92 : 150) * (wrong ? 0.78 : 1) * (0.96 + Math.random() * 0.08) * pitchMult;
-  o.frequency.setValueAtTime(base, t);
-  o.frequency.exponentialRampToValueAtTime(base * 0.55, t + 0.07);
-  const peak = wrong ? 0.28 : (deep ? 0.5 : 0.4);
-  og.gain.setValueAtTime(0.0001, t);
-  og.gain.exponentialRampToValueAtTime(peak, t + 0.006);
-  og.gain.exponentialRampToValueAtTime(0.0001, t + (deep ? 0.13 : 0.085));
-  o.connect(og).connect(masterGain); o.start(t); o.stop(t + 0.16);
-  if (noiseBuf) {
-    const n = audioCtx.createBufferSource(); n.buffer = noiseBuf;
-    const nf = audioCtx.createBiquadFilter(); nf.type = 'bandpass';
-    nf.frequency.value = wrong ? 1100 : (deep ? 1600 : 2300) * pitchMult; nf.Q.value = 0.7;
-    const ng = audioCtx.createGain(); ng.gain.value = wrong ? 0.1 : 0.16;
-    n.connect(nf).connect(ng).connect(masterGain); n.start(t); n.stop(t + 0.03);
+  if (!soundOn) return;
+  if (wrong) {
+    ensureAudio();
+    if (!audioCtx) return;
+    const t = audioCtx.currentTime;
+    const o = audioCtx.createOscillator(), og = audioCtx.createGain();
+    o.type = 'triangle';
+    const pitchMult = 1.0;
+    const base = 150 * 0.78 * (0.96 + Math.random() * 0.08) * pitchMult;
+    o.frequency.setValueAtTime(base, t);
+    o.frequency.exponentialRampToValueAtTime(base * 0.55, t + 0.07);
+    const peak = 0.28;
+    og.gain.setValueAtTime(0.0001, t);
+    og.gain.exponentialRampToValueAtTime(peak, t + 0.006);
+    og.gain.exponentialRampToValueAtTime(0.0001, t + 0.085);
+    o.connect(og).connect(masterGain); o.start(t); o.stop(t + 0.16);
+    if (noiseBuf) {
+      const n = audioCtx.createBufferSource(); n.buffer = noiseBuf;
+      const nf = audioCtx.createBiquadFilter(); nf.type = 'bandpass';
+      nf.frequency.value = 1100; nf.Q.value = 0.7;
+      const ng = audioCtx.createGain(); ng.gain.value = 0.1;
+      n.connect(nf).connect(ng).connect(masterGain); n.start(t); n.stop(t + 0.03);
+    }
+    return;
   }
+  playCorrectBeep();
 }
 function tick() {
   if (!soundOn) return; ensureAudio(); if (!audioCtx) return;
@@ -114,6 +119,38 @@ function winSound() {
   const notes = [523.25, 659.25, 783.99, 1046.5], t0 = audioCtx.currentTime;
   notes.forEach((f, i) => { const t = t0 + i * 0.09, o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = 'triangle'; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.28, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3); o.connect(g).connect(masterGain); o.start(t); o.stop(t + 0.32); });
 }
+
+// Preloaded Audio Pool for low-latency overlapping click/beep sound effects
+const BEEP_POOL_SIZE = 12;
+let beepPool = [];
+let beepPoolIndex = 0;
+
+function initBeepPool() {
+  if (beepPool.length > 0) return;
+  for (let i = 0; i < BEEP_POOL_SIZE; i++) {
+    const audio = new Audio('liecio-menu_beep_ploc-533786.mp3');
+    audio.volume = 1.0; // 100% volume
+    beepPool.push(audio);
+  }
+}
+
+function playCorrectBeep() {
+  if (!soundOn) return;
+  initBeepPool();
+  const audio = beepPool[beepPoolIndex];
+  audio.currentTime = 0;
+  audio.play().catch(e => console.warn('Pool beep play failed:', e));
+  beepPoolIndex = (beepPoolIndex + 1) % BEEP_POOL_SIZE;
+}
+
+function playMenuBeep() {
+  playCorrectBeep();
+}
+window.addEventListener('click', (e) => {
+  if (e.target.closest('button, a, .dcard, .key, [role="button"]')) {
+    playMenuBeep();
+  }
+});
 function toggleSound() {
   soundOn = !soundOn;
   localStorage.setItem('typing_game_sound', JSON.stringify(soundOn));
@@ -127,76 +164,43 @@ function updateSoundBtn() {
   b.querySelector('use').setAttribute('href', soundOn ? '#i-vol' : '#i-mute');
 }
 
-/* ===== MUSIC SYSTEM (YouTube Background) ===== */
+/* ===== MUSIC SYSTEM (HTML5 Audio) ===== */
 let musicOn = JSON.parse(localStorage.getItem('typing_game_music') ?? 'true');
-let ytPlayer = null, ytReady = false, ytPendingPlay = false;
-const YT_VIDEO_ID = 'S3V5JPJf9Eo';
+let bgMusic = null;
+const MUSIC_FILE = 'vespidaze-upbeat-rpg-battle-460971.mp3';
 
-/* Load YouTube IFrame API */
-(function loadYTAPI() {
-  if (window.YT && window.YT.Player) { onYTReady(); return; }
-  const tag = document.createElement('script');
-  tag.src = 'https://www.youtube.com/iframe_api';
-  document.head.appendChild(tag);
-})();
-
-/* Called by YouTube API when ready */
-window.onYouTubeIframeAPIReady = function() { onYTReady(); };
-
-function onYTReady() {
-  // Create hidden container if not exists
-  let container = document.getElementById('yt-music-container');
-  if (!container) {
-    container = document.createElement('div');
-    container.id = 'yt-music-container';
-    container.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;overflow:hidden;pointer-events:none';
-    document.body.appendChild(container);
-    const playerDiv = document.createElement('div');
-    playerDiv.id = 'yt-bg-player';
-    container.appendChild(playerDiv);
-  }
-
-  ytPlayer = new YT.Player('yt-bg-player', {
-    width: '1', height: '1',
-    videoId: YT_VIDEO_ID,
-    playerVars: {
-      autoplay: 0,
-      loop: 1,
-      playlist: YT_VIDEO_ID,  // Required for loop to work
-      controls: 0,
-      disablekb: 1,
-      fs: 0,
-      modestbranding: 1,
-      rel: 0,
-      playsinline: 1,
-      origin: window.location.origin
-    },
-    events: {
-      onReady: function(e) {
-        ytReady = true;
-        e.target.setVolume(60);
-        if (ytPendingPlay) { startMusic(); ytPendingPlay = false; }
-      },
-      onStateChange: function(e) {
-        // Auto-loop: if video ends, replay
-        if (e.data === YT.PlayerState.ENDED) {
-          e.target.seekTo(0); e.target.playVideo();
-        }
-      },
-      onError: function(e) {
-        console.warn('YouTube music error:', e.data);
-      }
-    }
-  });
+function ensureMusic() {
+  if (bgMusic) return;
+  bgMusic = new Audio(MUSIC_FILE);
+  bgMusic.loop = true;
+  bgMusic.volume = 0.3; // 30% volume
 }
 
 function startMusic() {
-  if (!ytReady) { ytPendingPlay = true; return; }
-  try { ytPlayer.setVolume(60); ytPlayer.playVideo(); } catch(e) { console.warn('Music play failed:', e); }
+  ensureMusic();
+  if (!musicOn) return;
+  bgMusic.volume = 0.3; // 30% volume
+  bgMusic.play().catch(e => console.warn('Music play failed:', e));
 }
 function stopMusic() {
-  if (!ytReady || !ytPlayer) return;
-  try { ytPlayer.pauseVideo(); } catch(e) {}
+  if (bgMusic) {
+    try { bgMusic.pause(); } catch(e) {}
+  }
+}
+function startGameplayMusic() {
+  ensureMusic();
+  if (!musicOn) return;
+  if (bgMusic) {
+    bgMusic.volume = 0.3; // 30% volume during gameplay
+    if (bgMusic.paused) {
+      bgMusic.play().catch(e => console.warn('BGM play failed:', e));
+    }
+  }
+}
+function stopGameplayMusic() {
+  if (musicOn && bgMusic) {
+    bgMusic.volume = 0.3;
+  }
 }
 function toggleMusic() {
   musicOn = !musicOn;
@@ -391,7 +395,8 @@ function renderFooter() {
     `<span class="status-sep"></span>` +
     `${tipLabel} ${keys}` +
     `<span class="status-sep"></span>` +
-    `${fingerTip}`;
+    `${fingerTip}` +
+    `<span class="version-tag" style="margin-left: auto; color: var(--muted); font-size: 10px; opacity: 0.6; font-family: 'IBM Plex Mono', monospace;">v1.0.0</span>`;
 }
 
 /* ===== SESSION / AUTH ===== */

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>เล่นเกม — คีย์เควสต์</title>
   <meta name="description" content="ฝึกพิมพ์ดีดภาษาไทยและอังกฤษกับโจทย์สุ่มใหม่ทุกครั้ง — เลือก 4 ระดับความยาก">
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -27,7 +27,7 @@
 <div class="wrap">
   <header>
     <div class="brand">
-      <div class="logo"><svg class="logo-svg" viewBox="0 0 128 128"><use href="#i-logo"></use></svg></div>
+      <div class="logo"><img class="logo-img" src="logo.png" alt="คีย์เควสต์ Logo"></div>
       <div>
         <h1>คีย์<span>เควสต์</span></h1>
         <p>เกมฝึกพิมพ์ดีด · ไทย & อังกฤษ · สุ่มโจทย์ใหม่ทุกครั้ง</p>
@@ -61,6 +61,9 @@
 
   <!-- ===== MENU SCREEN ===== -->
   <section class="screen" id="menu">
+    <div class="menu-logo-banner">
+      <img src="logo.png" alt="คีย์เควสต์" class="menu-logo-img">
+    </div>
     <div class="menu-head">
       <h2 id="menuTitle">เลือกระดับความยาก</h2>
       <p id="menuHint"><svg class="ic"><use href="#i-bolt"></use></svg> ทุกระดับสุ่มโจทย์ใหม่ทุกครั้งที่เล่น</p>
@@ -98,7 +101,6 @@
     <div id="keyboard" class="kb"></div>
     <div class="controls">
       <button class="btn btn-ghost" id="btnBack"><svg class="ic"><use href="#i-back"></use></svg> กลับ</button>
-      <button class="btn btn-amber" id="btnRestart"><svg class="ic"><use href="#i-refresh"></use></svg> เริ่มใหม่</button>
     </div>
   </section>
 

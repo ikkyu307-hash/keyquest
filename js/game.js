@@ -138,9 +138,9 @@ function updateSelection(){
 function menuKeyHandler(e){
   if(!screens||!screens.menu.classList.contains('on'))return;
   if(countingDown)return;
-  if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();selectedIdx=(selectedIdx+1)%DIFF_ORDER.length;updateSelection();tick();}
-  else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();selectedIdx=(selectedIdx-1+DIFF_ORDER.length)%DIFF_ORDER.length;updateSelection();tick();}
-  else if(e.key==='Enter'){e.preventDefault();launchWithCountdown(DIFF_ORDER[selectedIdx]);}
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();selectedIdx=(selectedIdx+1)%DIFF_ORDER.length;updateSelection();playMenuBeep();}
+  else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();selectedIdx=(selectedIdx-1+DIFF_ORDER.length)%DIFF_ORDER.length;updateSelection();playMenuBeep();}
+  else if(e.key==='Enter'){e.preventDefault();playMenuBeep();launchWithCountdown(DIFF_ORDER[selectedIdx]);}
 }
 
 /* ===== COUNTDOWN ===== */
@@ -208,6 +208,7 @@ function paintProgress(){const spans=$('textBox').children;
     sp.classList.add(cls);}
   const pb=$('progBar');if(pb)pb.style.width=(target.length?pos/target.length*100:0)+'%';}
 function startTimer(){started=true;startTime=performance.now();
+  startGameplayMusic();
   wpmHistory=[];accHistory=[];errorMap={};
   timerInt=setInterval(()=>{const t=(performance.now()-startTime)/1000;updateStats(t,accuracy(),wpm(t));},100);
   wpmSampleInt=setInterval(()=>{const t=(performance.now()-startTime)/1000;wpmHistory.push(wpm(t));accHistory.push(accuracy());},1000);}
@@ -293,6 +294,7 @@ function handleBackspace(){if(finished||pos===0||!started)return;tick();pos--;
 /* ===== FINISH ===== */
 async function finish(){
   finished=true;clearInterval(timerInt);clearInterval(wpmSampleInt);
+  stopGameplayMusic();
   const t=(performance.now()-startTime)/1000;const acc=accuracy(),w=wpm(t);
   score+=maxCombo*5+(acc===100?200:0);
   let stars=1;if(acc>=90&&w>=20)stars=2;if(acc>=96&&w>=35)stars=3;
@@ -304,7 +306,29 @@ async function finish(){
 
   let gainedXp=Math.round(correctChars*(acc/100));
   if(userStats.equipped_skills&&userStats.equipped_skills.includes('homerow')){gainedXp=Math.round(gainedXp*1.1);}
-  let gainedGold=Math.round((correctChars/8)*stars);
+  
+  let correctWords = 0;
+  const wordsList = target.split(' ');
+  let charIdx = 0;
+  for (let i = 0; i < wordsList.length; i++) {
+    const word = wordsList[i];
+    if (word.length === 0) {
+      charIdx++;
+      continue;
+    }
+    let wordOk = true;
+    for (let j = 0; j < word.length; j++) {
+      if (marks[charIdx + j] !== 'ok') {
+        wordOk = false;
+        break;
+      }
+    }
+    if (wordOk) {
+      correctWords++;
+    }
+    charIdx += word.length + 1;
+  }
+  let gainedGold = correctWords;
   if(userStats.equipped_skills&&userStats.equipped_skills.includes('goldenfingers')&&w>=40){gainedGold*=2;}
 
   const oldLvl=Math.floor(userStats.xp/200)+1;
@@ -502,6 +526,9 @@ function onLangChange(){
   if ($('lblTutorial')) $('lblTutorial').textContent = isTh ? 'ฝึกวางนิ้ว' : 'Finger Guide';
   if ($('lblQuests')) $('lblQuests').textContent = isTh ? 'ภารกิจ & อันดับ' : 'Quests & Rank';
   renderFooter();
+  if (screens && screens.game && screens.game.classList.contains('on')) {
+    startGame(diffKey);
+  }
 }
 
 /* ===== BOOT ===== */
@@ -513,8 +540,7 @@ async function bootGame(){
   onLangChange();
 
   // Wire buttons
-  $('btnBack').onclick=()=>{clearInterval(timerInt);showScreen(screens,'menu');};
-  $('btnRestart').onclick=()=>launchWithCountdown(diffKey);
+  $('btnBack').onclick=()=>{clearInterval(timerInt);stopGameplayMusic();showScreen(screens,'menu');};
   $('btnMenu').onclick=()=>showScreen(screens,'menu');
   $('btnRetry').onclick=()=>launchWithCountdown(diffKey);
   $('btnNext').onclick=()=>{const idx=DIFF_ORDER.indexOf(diffKey);launchWithCountdown(DIFF_ORDER[Math.min(idx+1,DIFF_ORDER.length-1)]);};

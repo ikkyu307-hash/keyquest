@@ -145,6 +145,9 @@ function renderLessons(){
 
 /* ===== START LESSON ===== */
 function startLesson(les){
+  if(window._tutKeyHandler){
+    window.removeEventListener('keydown',window._tutKeyHandler);
+  }
   currentLesson=les;
   practicePos=0;practiceCorrect=0;practiceTotal=0;practiceStreak=0;practiceStarted=false;
   const isTh=lang==='th';
@@ -236,7 +239,11 @@ function highlightKey(){
 /* ===== HANDLE KEY ===== */
 function handlePracticeKey(ch){
   if(practicePos>=practiceTarget.length)return;
-  if(!practiceStarted){practiceStarted=true;practiceStartTime=performance.now();}
+  if(!practiceStarted){
+    practiceStarted=true;
+    practiceStartTime=performance.now();
+    startGameplayMusic();
+  }
 
   practiceTotal++;
   const expected=practiceTarget[practicePos];
@@ -274,6 +281,7 @@ function handlePracticeKey(ch){
 /* ===== FINISH LESSON ===== */
 function finishLesson(w,acc){
   window.removeEventListener('keydown',window._tutKeyHandler);
+  stopGameplayMusic();
   const isTh=lang==='th';
   const xpGain=Math.round(20+(w/2)+(acc>95?20:0));
 
@@ -303,7 +311,13 @@ function finishLesson(w,acc){
 }
 
 /* ===== LANG CHANGE ===== */
-function onLangChange(){renderLessons();renderFooter();}
+function onLangChange(){
+  renderLessons();
+  renderFooter();
+  if (screens && screens.practiceScreen && screens.practiceScreen.classList.contains('on')) {
+    startLesson(currentLesson);
+  }
+}
 
 /* ===== BOOT ===== */
 async function bootTutorial(){
@@ -315,6 +329,7 @@ async function bootTutorial(){
 
   $('btnBackLessons').onclick=()=>{
     window.removeEventListener('keydown',window._tutKeyHandler);
+    stopGameplayMusic();
     showScreen(screens,'lessonSelect');renderLessons();
   };
   $('btnLcLessons').onclick=()=>{showScreen(screens,'lessonSelect');renderLessons();};

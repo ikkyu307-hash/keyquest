@@ -46,8 +46,9 @@
 
 /* Practice text */
 .practice-type-card{padding:28px 24px;margin-bottom:18px}
-.practice-text{font-size:32px;line-height:2;text-align:center;min-height:60px;user-select:none;letter-spacing:3px;
-  font-family:"IBM Plex Mono","IBM Plex Sans Thai",monospace}
+.practice-text{font-size:32px;line-height:2;text-align:center;min-height:60px;user-select:none;}
+html[lang="th"] .practice-text{font-family:"IBM Plex Sans Thai","Noto Sans Thai",sans-serif;letter-spacing:1px;word-spacing:4px}
+html[lang="en"] .practice-text{font-family:"IBM Plex Mono",monospace;letter-spacing:3px}
 .practice-text span{transition:color .08s,background .08s}
 .practice-text span.pending{color:#4a4670}
 .practice-text span.done{color:var(--mint);text-shadow:0 0 6px rgba(95,230,168,.3)}

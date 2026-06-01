@@ -53,23 +53,16 @@ body{
 ::selection{background:rgba(255,180,61,.3);color:#fff}
 .wrap{width:100%;max-width:980px;position:relative;z-index:1}
 .ic{width:18px;height:18px;display:inline-block;flex:none;stroke:currentColor;fill:none;
-    stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
+    stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px;
+    shape-rendering: crispEdges;}
+svg {
+  shape-rendering: crispEdges;}
 
-/* ===== ANIMATED AURORA BACKGROUND ===== */
-body::before{content:"";position:fixed;inset:-30%;z-index:0;pointer-events:none;
-  background:
-    radial-gradient(600px 600px at 18% 22%, rgba(255,180,61,.14), transparent 65%),
-    radial-gradient(500px 500px at 82% 68%, rgba(84,214,255,.12), transparent 60%),
-    radial-gradient(400px 400px at 55% 12%, rgba(167,139,250,.10), transparent 55%),
-    radial-gradient(350px 350px at 72% 88%, rgba(255,93,108,.08), transparent 55%),
-    radial-gradient(300px 300px at 30% 78%, rgba(95,230,168,.07), transparent 50%);
-  filter:blur(12px);
-  animation:auroraDrift 20s ease-in-out infinite alternate}
-@keyframes auroraDrift{
-  0%{transform:translate(0,0) scale(1) rotate(0deg)}
-  33%{transform:translate(2%,-3%) scale(1.06) rotate(1deg)}
-  66%{transform:translate(-3%,2%) scale(1.04) rotate(-1deg)}
-  100%{transform:translate(1%,1%) scale(1.08) rotate(0.5deg)}}
+/* ===== RETRO PIXEL BACKGROUND ===== */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background: url('../bg.png') no-repeat center center;
+  background-size: cover;
+  opacity: 0.35;}
 
 /* Noise texture overlay */
 body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -85,7 +78,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:16px;ma
   transition:transform .3s,filter .3s}
 .logo:hover{transform:rotate(0deg) scale(1.08);filter:drop-shadow(2px 4px 16px rgba(255,180,61,.5))}
 .logo .ic{width:30px;height:30px;stroke-width:2.4}
-.logo-svg{width:100%;height:100%}
+.logo-svg, .logo-img{width:100%;height:100%;object-fit:contain}
 .brand h1{font-family:"Kanit";font-weight:800;font-size:27px;letter-spacing:.5px;line-height:1;
   text-shadow:0 2px 12px rgba(0,0,0,.4)}
 .brand h1 span{color:var(--amber);text-shadow:0 0 20px rgba(255,180,61,.3)}

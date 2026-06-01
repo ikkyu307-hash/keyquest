@@ -1466,13 +1466,6 @@ $('btnBack').onclick=()=>{
     show('menu');
   }
 };
-$('btnRestart').onclick=()=>{
-  if (isRoomGame) {
-    startRoomGame();
-  } else {
-    startGame(diffKey);
-  }
-};
 $('btnMenu').onclick=()=>show('menu');
 $('btnRetry').onclick=()=>{
   if (isRoomGame) {

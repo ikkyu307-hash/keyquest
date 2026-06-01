@@ -297,3 +297,18 @@ html[lang="en"] .key{font-family:"IBM Plex Mono",monospace}
 @media(prefers-reduced-motion:reduce){
   #progBar::after,.key.next,.type-card.heat-2,.type-card.heat-3,#sCombo.t3{animation:none}
 }
+
+.menu-logo-banner {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.menu-logo-img {
+  max-width: 220px;
+  height: auto;
+  filter: drop-shadow(0 4px 30px rgba(255, 180, 61, 0.45));
+  animation: logoFloat 3s ease-in-out infinite;
+}
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
