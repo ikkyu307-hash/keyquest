@@ -181,6 +181,7 @@ function launchWithCountdown(key){
 /* ===== GAME FLOW ===== */
 function startGame(key){
   ensureAudio();if(musicOn)startMusic();
+  const stage=$('monsterStage');if(stage)stage.classList.add('playing');
   diffKey=key;target=DIFFS[key].gen(lang);
   cells=buildCells(target);posToCell=[];cells.forEach((c,ci)=>{for(let i=c.start;i<c.end;i++)posToCell[i]=ci;});
   marks=new Array(target.length).fill('');
@@ -296,6 +297,7 @@ function handleBackspace(){if(finished||pos===0||!started)return;tick();pos--;
 async function finish(){
   finished=true;clearInterval(timerInt);clearInterval(wpmSampleInt);
   stopGameplayMusic();
+  const stage=$('monsterStage');if(stage)stage.classList.remove('playing');
   const t=(performance.now()-startTime)/1000;const acc=accuracy(),w=wpm(t);
   score+=maxCombo*5+(acc===100?200:0);
   let stars=1;if(acc>=90&&w>=20)stars=2;if(acc>=96&&w>=35)stars=3;
@@ -541,7 +543,7 @@ async function bootGame(){
   onLangChange();
 
   // Wire buttons
-  $('btnBack').onclick=()=>{clearInterval(timerInt);stopGameplayMusic();showScreen(screens,'menu');};
+  $('btnBack').onclick=()=>{clearInterval(timerInt);stopGameplayMusic();const stage=$('monsterStage');if(stage)stage.classList.remove('playing');showScreen(screens,'menu');};
   $('btnMenu').onclick=()=>showScreen(screens,'menu');
   $('btnRetry').onclick=()=>launchWithCountdown(diffKey);
   $('btnNext').onclick=()=>{const idx=DIFF_ORDER.indexOf(diffKey);launchWithCountdown(DIFF_ORDER[Math.min(idx+1,DIFF_ORDER.length-1)]);};
