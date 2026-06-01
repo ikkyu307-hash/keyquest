@@ -236,11 +236,11 @@ function handleChar(ch){
     if(shieldActive&&combo>=5){
       shieldActive=false;
       floatPoints(cellSpan(pos),lang==='th'?'🛡️ ป้องกัน!':'🛡️ Blocked!',true);
-      tick();marks[pos]='bad';flashChar(cellSpan(pos),true);cardShake();pos++;
+      tick();marks[pos]='bad';flashChar(cellSpan(pos),true);cardShake();
     }else{
       combo=0;
       score=Math.max(0,score-(userStats.equipped_skills.includes('chillaura')?0:3));
-      marks[pos]='bad';flashChar(cellSpan(pos),true);cardShake();updateHeat();pos++;
+      marks[pos]='bad';flashChar(cellSpan(pos),true);cardShake();updateHeat();
     }
   }
   if(pos>=target.length){finish();return;}
