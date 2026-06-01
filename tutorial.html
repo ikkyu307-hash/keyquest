@@ -61,7 +61,24 @@
       <h2 id="tutTitle">🖐 ฝึกพิมพ์สัมผัส</h2>
       <p id="tutDesc">เรียนรู้การวางนิ้ว จำตำแหน่งแป้น พิมพ์โดยไม่ต้องมอง</p>
     </div>
-    <div class="lessons-grid" id="lessonsGrid"></div>
+
+    <div class="tut-tabs">
+      <button class="tab-btn active" id="btnTabLessons">
+        <svg class="ic"><use href="#i-hand"></use></svg> <span id="lblTabLessons">บทเรียน</span>
+      </button>
+      <button class="tab-btn" id="btnTabGuide">
+        <svg class="ic"><use href="#i-bulb"></use></svg> <span id="lblTabGuide">คู่มือ & เทคนิค</span>
+      </button>
+    </div>
+
+    <div class="tab-content on" id="lessonsView">
+      <div class="lessons-grid" id="lessonsGrid"></div>
+    </div>
+
+    <div class="tab-content" id="guideView">
+      <div class="guide-container glass" id="guideContainer"></div>
+    </div>
+
     <div class="controls" style="margin-top:28px">
       <a class="btn btn-ghost" href="game.html"><svg class="ic"><use href="#i-back"></use></svg> <span id="lblBackGame">กลับเกม</span></a>
     </div>

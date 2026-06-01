@@ -117,6 +117,7 @@ function initScreens(){
 }
 
 /* ===== RENDER LESSONS ===== */
+/* ===== RENDER LESSONS ===== */
 function renderLessons(){
   const grid=$('lessonsGrid');if(!grid)return;
   const progress=getLessonProgress();
@@ -141,6 +142,149 @@ function renderLessons(){
     if(!locked)card.onclick=()=>startLesson(les);
     grid.appendChild(card);
   });
+  renderGuide();
+}
+
+/* ===== RENDER GUIDE CONTENT ===== */
+function renderGuide() {
+  const container = $('guideContainer');
+  if (!container) return;
+  const isTh = lang === 'th';
+
+  $('lblTabLessons').textContent = isTh ? 'บทเรียน' : 'Lessons';
+  $('lblTabGuide').textContent = isTh ? 'คู่มือ & เทคนิค' : 'Guide & Tips';
+
+  if (isTh) {
+    container.innerHTML = `
+      <h3>🖐 เทคนิคการฝึกพิมพ์สัมผัส (Touch Typing Guide)</h3>
+      <p class="intro">
+        การฝึกพิมพ์สัมผัส (Touch Typing) เป็นทักษะสำคัญที่ช่วยประหยัดเวลา เพิ่มประสิทธิภาพการทำงาน และลดความเสี่ยงจากอาการปวดเมื่อยหรือออฟฟิศซินโดรม 
+        หัวใจหลักของการพิมพ์สัมผัสคือการสร้าง <strong>หน่วยความจำกล้ามเนื้อ (Muscle Memory)</strong> เพื่อให้สมองสั่งการนิ้วมือได้อัตโนมัติโดยไม่ต้องใช้สายตามอง
+      </p>
+
+      <div class="guide-card">
+        <h4><span class="num">1</span> การจัดท่าทางและสรีระให้ถูกต้อง (Ergonomics)</h4>
+        <p class="guide-card-p">การจัดท่าทางเป็นพื้นฐานสำคัญที่สุดเพื่อป้องกันความเมื่อยล้าและทำให้การเคลื่อนไหวนิ้วเป็นไปอย่างอิสระ:</p>
+        <ul class="guide-sub-list">
+          <li><strong>ท่านั่ง:</strong> นั่งหลังตรง สะโพกชิดพนักพิง ห่างจากขอบโต๊ะประมาณ 1 คืบ และวางเท้าให้ราบกับพื้นทั้งสองข้างเพื่อความมั่นคง</li>
+          <li><strong>แขนและข้อมือ:</strong> ปล่อยแขนตามสบายให้ข้อศอกตั้งฉากหรือขนานกับพื้นโต๊ะ ข้อมือควรลอยเหนือแป้นพิมพ์ (ห้ามวางทับหรือตกลงบนขอบโต๊ะเด็ดขาด) เพื่อลดการกดทับเส้นประสาทและให้นิ้วขยับได้คล่องตัว</li>
+          <li><strong>นิ้วมือ:</strong> งอนิ้วให้โค้งเหมือนตะขอ (ประมาณ 2 ข้อ) และสัมผัสแป้นพิมพ์ด้วย "ปลายนิ้วหรือจมูกเล็บ" ในแนวดิ่ง</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h4><span class="num">2</span> การยึดตำแหน่ง "แป้นเหย้า" (Home Row) เป็นศูนย์กลางเสมอ</h4>
+        <p class="guide-card-p">แป้นเหย้าคือจุดพักนิ้วมือ (ภาษาอังกฤษคือ A S D F และ J K L ; ส่วนภาษาไทยคือ ฟ ห ก ด และ ่ า ส ว)</p>
+        <ul class="guide-sub-list">
+          <li><strong>รอยนูนสัมผัส:</strong> บนแป้นพิมพ์มาตรฐานจะมีรอยนูนบนปุ่ม F และ J (หรือ ด และ ่) เพื่อให้ใช้นิ้วชี้สัมผัสหาจุดศูนย์กลางได้โดยไม่ต้องก้มมอง</li>
+          <li><strong>กฎสำคัญ:</strong> เมื่อเอื้อมนิ้วไปกดปุ่มอื่นเสร็จแล้ว ต้องชักนิ้วกลับมาวางพักที่แป้นเหย้าเสมอ การปล่อยให้นิ้วลอยคว้างจะทำให้สมองเสียพิกัดการจำตำแหน่ง</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h4><span class="num">3</span> ห้ามก้มมองแป้นพิมพ์เด็ดขาด (Blind Typing)</h4>
+        <p class="guide-card-p">นี่คืออุปสรรคใหญ่ที่สุดที่ทำให้คนพิมพ์ช้า การก้มมองแป้นจะทำลายกระแสประสาทการจดจำของกล้ามเนื้อ และทำให้เมื่อยคอ:</p>
+        <ul class="guide-sub-list">
+          <li><strong>เทคนิคแก้ไข:</strong> ให้สายตาจดจ่ออยู่ที่หน้าจอเท่านั้น หากเผลอมองแป้นบ่อยๆ แนะนำให้นำผ้ามาคลุมมือและแป้นพิมพ์ไว้ หรือใช้แผ่นสติ๊กเกอร์ปิดทับตัวอักษร เพื่อบังคับให้ตัวเองใช้สัมผัสแทนสายตา</li>
+          <li><strong>หากลืมปุ่ม:</strong> อย่าเดามั่ว ให้หยุดคิดหรือดูผังคีย์บอร์ดบนหน้าจอ แล้วลองกดปุ่มนั้นซ้ำๆ เพื่อสร้างความคุ้นเคยใหม่</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h4><span class="num">4</span> กฎความแม่นยำ 90% (90% Accuracy Rule)</h4>
+        <p class="guide-card-p">คุณควรเพิ่มความเร็วในการพิมพ์ก็ต่อเมื่อคุณสามารถรักษาความถูกต้องในการพิมพ์ได้อย่างน้อย 90% ขึ้นไปเท่านั้น หากความแม่นยำต่ำกว่าเกณฑ์ควรลดความเร็วในการพิมพ์ลงจนกว่าความแม่นยำจะกลับมาสู่ระดับเดิม:</p>
+        <ul class="guide-sub-list">
+          <li><strong>ประหยัดเวลามากกว่า:</strong> การพยายามพิมพ์เร็วเกินทักษะทำให้ผิดบ่อย ซึ่งการตามแก้คำผิดเสียเวลามากกว่าพิมพ์ช้าๆ ให้ถูกตั้งแต่แรก 2-3 เท่า</li>
+          <li><strong>ป้องกันความจำที่ผิดพลาด:</strong> หากพิมพ์ผิดบ่อยๆ สมองและกล้ามเนื้อจะจดจำรูปแบบการก้าวนิ้วที่ผิดพลาดไปใช้</li>
+          <li><strong>ป้องกันนิสัยที่ไม่ดี:</strong> การพิมพ์ผิดแล้วต้องตามแก้เรื่อยๆ จะสร้างความหงุดหงิดและนำไปสู่พฤติกรรมการพิมพ์ที่แย่ลง</li>
+          <li><strong>ช่วยให้ความเร็วสุทธิ (Net WPM) ดีขึ้น:</strong> หากฝืนพิมพ์เร็วแต่ผิดพลาดสูง ท้ายที่สุดแล้วความเร็วสุทธิของคุณจะน้อยกว่าการยอมพิมพ์ช้าลงแต่พิมพ์ได้อย่างแม่นยำ</li>
+          <li><strong>สร้างรากฐานที่มั่นคง:</strong> เมื่อพิมพ์ได้อย่างถูกต้องจนร่างกายจดจำได้โดยอัตโนมัติแล้ว ความเร็วในการพิมพ์จะค่อยๆ เพิ่มขึ้นมาเองตามธรรมชาติ</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h4><span class="num">5</span> เทคนิคการก้าวนิ้วและการอ่าน</h4>
+        <ul class="guide-sub-list">
+          <li><strong>การเคาะแป้น:</strong> ใช้วิธีแตะหรือเคาะเบาๆ ด้วยแรงที่น้อยที่สุด แล้วสปริงนิ้วขึ้นทันที ไม่ควรกดแป้นแช่ค้างไว้หรือกระแทกแรงๆ</li>
+          <li><strong>การอ่านข้อความ:</strong> เมื่อเริ่มชำนาญขึ้น ให้ปรับวิธีมองข้อความต้นฉบับ โดยอ่านรวบเป็นกลุ่มคำหรือประโยค (Sight-reading) แทนการจ้องสะกดทีละตัวอักษร จะช่วยให้สมองสั่งการกล้ามเนื้อได้ลื่นไหลขึ้น</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h4><span class="num">6</span> ฝึกซ้อมสม่ำเสมอด้วยเวลาสั้นๆ (Consistency is Key)</h4>
+        <p class="guide-card-p">การฝึกพิมพ์เป็นเวลานานแบบมาราธอนจะทำให้เกิดความล้าและขาดสมาธิ:</p>
+        <ul class="guide-sub-list">
+          <li><strong>เวลาที่เหมาะสม:</strong> ฝึกเพียงวันละ 15 - 30 นาที แต่ทำให้สม่ำเสมอทุกวัน สมองจะประมวลผลและพัฒนาทักษะได้ดีกว่า</li>
+          <li><strong>แหล่งฝึกซ้อมเสริม:</strong> นอกเหนือจากการพิมพ์เล่นในคีย์เควสต์ คุณสามารถใช้เว็บไซต์ฝึกพิมพ์สัมผัส เช่น TypingStudy, Keybr, 10FastFingers หรือ TypingClub เพื่อช่วยประเมินความเร็ว (WPM) และชี้เป้าจุดที่นิ้วของคุณยังทำได้ไม่ดี</li>
+        </ul>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `
+      <h3>🖐 Touch Typing Guide & Techniques</h3>
+      <p class="intro">
+        Touch typing is an essential skill that saves time, increases work efficiency, and reduces the risk of muscle strain. 
+        The core of touch typing is developing <strong>Muscle Memory</strong>, allowing the brain to control your fingers automatically without looking.
+      </p>
+
+      <div class="guide-card">
+        <h4><span class="num">1</span> Correct Posture and Ergonomics</h4>
+        <p class="guide-card-p">Posture is the foundation to prevent fatigue and allow fingers to move freely:</p>
+        <ul class="guide-sub-list">
+          <li><strong>Seating:</strong> Sit upright, back close to the backrest, about one hand-span away from the desk. Keep both feet flat on the floor for stability.</li>
+          <li><strong>Wrists & Arms:</strong> Keep elbows relaxed and parallel to the desk. Wrists should float above the keyboard (never rest them on the desk or key edge) to reduce pressure and keep fingers agile.</li>
+          <li><strong>Fingers:</strong> Curve fingers like hooks (bending at the first two joints) and press keys vertically with your fingertips or nail beds.</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h4><span class="num">2</span> Stay Centered on the "Home Row"</h4>
+        <p class="guide-card-p">The home row is the resting position (A S D F and J K L ; in English, ฟ ห ก ด and ่ า ส ว in Thai).</p>
+        <ul class="guide-sub-list">
+          <li><strong>Tactile Bumps:</strong> Standard keyboards have tactile bumps on the F and J keys (or ด and ่) to help you locate the center without looking down.</li>
+          <li><strong>Golden Rule:</strong> Always return your fingers to the home row after pressing other keys. Leaving fingers floating makes the brain lose track of coordinates.</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h4><span class="num">3</span> Never Look at the Keyboard (Blind Typing)</h4>
+        <p class="guide-card-p">Looking down breaks muscle memory reinforcement and strains your neck:</p>
+        <ul class="guide-sub-list">
+          <li><strong>Technique:</strong> Keep your eyes focused entirely on the screen. If you struggle, cover your hands with a cloth or use blank sticker covers.</li>
+          <li><strong>Forget a key:</strong> Don't guess blindly. Look at the on-screen keyboard layout and practice pressing that key repeatedly to rebuild familiarity.</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h4><span class="num">4</span> 90% Accuracy Rule</h4>
+        <p class="guide-card-p">You should only increase typing speed when you can maintain at least 90% accuracy. If it falls below, slow down until accuracy returns to normal.</p>
+        <ul class="guide-sub-list">
+          <li><strong>Save Time:</strong> Typing faster than your skill level causes errors. Correcting mistakes takes 2-3 times longer than typing slowly and accurately from the start.</li>
+          <li><strong>Prevent Bad Muscle Memory:</strong> Typing wrong keys teaches your muscles incorrect paths.</li>
+          <li><strong>Reduce Frustration:</strong> Stop constant deleting/correcting to maintain a smooth typing experience and positive habit.</li>
+          <li><strong>Better Net Speed (Net WPM):</strong> Ultimately, your net typing speed will be higher than rushing with low accuracy.</li>
+          <li><strong>Solid Foundation:</strong> Once typing accurately becomes an automatic physical response, speed naturally increases.</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h4><span class="num">5</span> Keystrokes & Sight Reading</h4>
+        <ul class="guide-sub-list">
+          <li><strong>Keystrokes:</strong> Tap keys lightly with minimal force and spring back immediately. Do not smash or hold keys down.</li>
+          <li><strong>Reading:</strong> As you improve, read in word groups or phrases (sight-reading) rather than spelling letter-by-letter.</li>
+        </ul>
+      </div>
+
+      <div class="guide-card">
+        <h4><span class="num">6</span> Practice Consistently in Short Sessions</h4>
+        <p class="guide-card-p">Long marathon sessions cause fatigue and drop in focus.</p>
+        <ul class="guide-sub-list">
+          <li><strong>Duration:</strong> Practice 15 - 30 minutes daily. Consistency helps the brain process and retain motor skills much better.</li>
+          <li><strong>Extra Tools:</strong> Supplement your practice on sites like TypingStudy, Keybr, 10FastFingers, or TypingClub to track your WPM and identify weak spots.</li>
+        </ul>
+      </div>
+    `;
+  }
 }
 
 /* ===== START LESSON ===== */
@@ -328,6 +472,30 @@ async function bootTutorial(){
 
   initScreens();
   renderLessons();
+
+  const btnTabLessons = $('btnTabLessons');
+  const btnTabGuide = $('btnTabGuide');
+  const lessonsView = $('lessonsView');
+  const guideView = $('guideView');
+
+  if (btnTabLessons && btnTabGuide && lessonsView && guideView) {
+    btnTabLessons.onclick = () => {
+      if (btnTabLessons.classList.contains('active')) return;
+      playMenuBeep();
+      btnTabLessons.classList.add('active');
+      btnTabGuide.classList.remove('active');
+      lessonsView.classList.add('on');
+      guideView.classList.remove('on');
+    };
+    btnTabGuide.onclick = () => {
+      if (btnTabGuide.classList.contains('active')) return;
+      playMenuBeep();
+      btnTabGuide.classList.add('active');
+      btnTabLessons.classList.remove('active');
+      guideView.classList.add('on');
+      lessonsView.classList.remove('on');
+    };
+  }
 
   $('btnBackLessons').onclick=()=>{
     window.removeEventListener('keydown',window._tutKeyHandler);
