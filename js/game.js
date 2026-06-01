@@ -72,10 +72,9 @@ let countingDown=false;
 /* ===== RESULT ANALYSIS STATE ===== */
 let wpmHistory=[],accHistory=[],errorMap={},wpmSampleInt=null;
 
-/* ===== THAI COMBINING MARKS ===== */
-function isCombiningThai(cp){return cp===0x0E31||(cp>=0x0E34&&cp<=0x0E3A)||(cp>=0x0E47&&cp<=0x0E4E);}
-function buildCells(str){const out=[];for(let i=0;i<str.length;i++){const cp=str.codePointAt(i);
-  if(out.length&&isCombiningThai(cp)){const c=out[out.length-1];c.text+=str[i];c.end=i+1;}
+/* ===== CELLS CONVERTER ===== */
+function buildCells(str){const out=[];const shouldCombine=diffKey!=='easy';for(let i=0;i<str.length;i++){const cp=str.codePointAt(i);
+  if(shouldCombine&&out.length&&isCombiningThai(cp)){const c=out[out.length-1];c.text+=str[i];c.end=i+1;}
   else out.push({text:str[i],start:i,end:i+1});}return out;}
 function cellSpan(i){return $('textBox').children[posToCell[i]];}
 
@@ -196,7 +195,9 @@ function startGame(key){
   updateStats(0,100,0);buildCharMap();renderKeyboard();renderText();showScreen(screens,'game');
 }
 function renderText(){const box=$('textBox');box.innerHTML='';
-  cells.forEach((c,ci)=>{const sp=document.createElement('span');sp.textContent=c.text===' '?'\u00A0':c.text;box.appendChild(sp);});
+  cells.forEach((c,ci)=>{const sp=document.createElement('span');
+    const displayChar=(c.text!==' '&&isCombiningThai(c.text.codePointAt(0)))?'\u25CC'+c.text:c.text;
+    sp.textContent=displayChar===' '?'\u00A0':displayChar;box.appendChild(sp);});
   paintProgress();highlightKey(target[pos]);}
 function paintProgress(){const spans=$('textBox').children;
   for(let ci=0;ci<cells.length;ci++){const c=cells[ci],sp=spans[ci];if(!sp)continue;

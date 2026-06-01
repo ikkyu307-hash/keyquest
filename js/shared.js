@@ -63,6 +63,9 @@ const AUTH_TEXT = {
   }
 };
 
+/* ===== THAI COMBINING MARKS HELPERS ===== */
+function isCombiningThai(cp){return cp===0x0E31||(cp>=0x0E34&&cp<=0x0E3A)||(cp>=0x0E47&&cp<=0x0E4E);}
+
 /* ===== SOUND SYSTEM ===== */
 let soundOn = JSON.parse(localStorage.getItem('typing_game_sound') ?? 'true');
 let audioCtx = null, masterGain = null, noiseBuf = null;

@@ -190,7 +190,9 @@ function renderPracticeText(){
     let cls='pending';
     if(i<practicePos)cls='done';
     if(i===practicePos)cls='cur';
-    html+=`<span class="${cls}">${practiceTarget[i]}</span>`;
+    const char=practiceTarget[i];
+    const displayChar=(char!==' '&&isCombiningThai(char.codePointAt(0)))?'\u25CC'+char:char;
+    html+=`<span class="${cls}">${displayChar}</span>`;
   }
   box.innerHTML=html;
 }
